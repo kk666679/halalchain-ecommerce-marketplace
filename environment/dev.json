@@ -1,0 +1,18 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "postgres",
+    "password": "password",
+    "database": "halalchain"
+  },
+  "email": {
+    "smtp_address": "smtp.gmail.com",
+    "smtp_port": 587,
+    "email": "hello@cancerclinickerala.com",
+    "email_password": "xopi mkty hcnw qicq"
+  },
+  "jwt": {
+    "secret": "your-jwt-secret"
+  }
+}

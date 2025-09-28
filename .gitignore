@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+apps/**/node_modules/
+backend/node_modules/
+halalchain-ecommerce/node_modules/
+
+# Production builds
+dist/
+**/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+**/coverage/
+
+# nyc test coverage
+.nyc_output
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Prisma
+prisma/migrations/
+*.db
+
+# Next.js
+.next/
+out/
+
+# NestJS
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Monorepo-specific builds
+apps/**/dist/
+backend/dist/
+halalchain-ecommerce/dist/
+
+# Frontend builds
+build/
+**/build/
+
+# Additional lockfiles (if using yarn/pnpm in sub-projects)
+yarn.lock
+pnpm-lock.yaml
+
+# Recursive environment variables
+**/.env*
+
+# Additional caches
+**/.cache/
+
+# Separate git repositories
+backend/
