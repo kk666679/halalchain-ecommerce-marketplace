@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="halalchain_multivendor_aliexpress_sync" instance="HalalChain\Multivendor\Cron\AliExpressSync" method="execute">
+            <schedule>0 */6 * * *</schedule> <!-- Every 6 hours -->
+        </job>
+    </group>
+</config>

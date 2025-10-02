@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="HalalChain_Multivendor::vendor" title="Vendors" module="HalalChain_Multivendor" sortOrder="10" parent="Magento_Catalog::inventory" action="halalchain_multivendor/vendor/index" resource="HalalChain_Multivendor::vendor"/>
+        <add id="HalalChain_Multivendor::aliexpress" title="AliExpress Sync" module="HalalChain_Multivendor" sortOrder="20" parent="Magento_Catalog::inventory" action="halalchain_multivendor/aliexpress/sync" resource="HalalChain_Multivendor::aliexpress"/>
+    </menu>
+</config>
