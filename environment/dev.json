@@ -9,7 +9,7 @@
   "email": {
     "smtp_address": "smtp.gmail.com",
     "smtp_port": 587,
-    "email": "hello@cancerclinickerala.com",
+    "email": "hello@clinicmalaysia.com",
     "email_password": "xopi mkty hcnw qicq"
   },
   "jwt": {

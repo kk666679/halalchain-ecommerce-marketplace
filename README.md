@@ -13,8 +13,8 @@
 ![AI](https://img.shields.io/badge/AI--Agents-Multi--Agent-FF6B35.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-🔗 **Live Demo**: [halalchain-demo.com](https://halalchain-demo.com)
-📖 **Documentation**: [docs.halalchain.com](https://docs.halalchain.com)
+🔗 **Live Demo**: [demo.halal-chain.com](https://halal-chain.com)
+📖 **Documentation**: [docs.halal-chain.com](https://docs.halal-chain.com)
 
 ---
 
