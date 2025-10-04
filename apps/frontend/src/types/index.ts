@@ -37,3 +37,25 @@ export interface RegisterRequest {
   password: string;
   role: 'buyer' | 'vendor';
 }
+
+export interface CartItem {
+  id: string;
+  productId: string;
+  quantity: number;
+  product: Product & {
+    vendor: {
+      id: string;
+      storeName: string;
+    };
+  };
+}
+
+export interface Cart {
+  items: CartItem[];
+  total: number;
+}
+
+export interface CheckoutData {
+  shippingAddress: string;
+  paymentMethod: string;
+}

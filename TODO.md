@@ -93,3 +93,8 @@ Create `apps/frontend/.env.local`:
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
+
+## Pending Tasks
+- [x] Update Header component to include CartIcon for displaying cart item count
+- [x] Create integration pages for SAP Commerce Cloud, Alibaba Commerce Cloud, Adobe Commerce Cloud, and Oracle Commerce Cloud
+- [ ] Update navigation strategy (navbar) for improved user experience

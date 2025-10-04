@@ -95,6 +95,13 @@ export default function DashboardPage() {
                 View Analytics
               </Button>
             </div>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-2">Integrations</h3>
+              <p className="text-gray-600 mb-4">Connect with commerce platforms</p>
+              <Button variant="primary" size="sm" onClick={() => router.push('/integrations')}>
+                Manage Integrations
+              </Button>
+            </div>
           </div>
         )}
 
@@ -145,6 +152,13 @@ export default function DashboardPage() {
               <p className="text-gray-600 mb-4">Platform insights</p>
               <Button variant="primary" size="sm">
                 View Analytics
+              </Button>
+            </div>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-2">Integrations</h3>
+              <p className="text-gray-600 mb-4">Manage commerce platform integrations</p>
+              <Button variant="primary" size="sm" onClick={() => router.push('/integrations')}>
+                Manage Integrations
               </Button>
             </div>
           </div>
