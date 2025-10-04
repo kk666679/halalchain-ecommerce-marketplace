@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from './Button';
 
@@ -29,8 +30,14 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-green-600">
-            HalalChain
+          <Link href="/" className="flex items-center">
+            <Image
+              src="https://oq1gkkfo4q0hj5xi.public.blob.vercel-storage.com/Halalchain_20251003_011847_0000.svg"
+              alt="HalalChain"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Search Bar */}

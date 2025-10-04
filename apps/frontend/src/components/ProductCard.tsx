@@ -18,7 +18,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
         <Image
-          src={product.images[0] || '/placeholder-product.jpg'}
+          src={product.images[0] || 'https://oq1gkkfo4q0hj5xi.public.blob.vercel-storage.com/Halalchain_20251003_011828_0000.png'}
           alt={product.name}
           width={300}
           height={200}

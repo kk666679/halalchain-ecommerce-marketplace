@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const Footer: React.FC = () => {
   return (
@@ -8,7 +9,13 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">HalalChain</h3>
+            <Image
+              src="https://oq1gkkfo4q0hj5xi.public.blob.vercel-storage.com/Halalchain_20251003_011847_0000.svg"
+              alt="HalalChain"
+              width={120}
+              height={40}
+              className="h-8 w-auto mb-4 filter invert"
+            />
             <p className="text-gray-300 text-sm">
               Your trusted marketplace for halal-certified products with blockchain verification.
             </p>
@@ -40,7 +47,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm">
               <li><Link href="/vendor/register" className="text-gray-300 hover:text-white">Become a Vendor</Link></li>
               <li><Link href="/vendor/dashboard" className="text-gray-300 hover:text-white">Vendor Portal</Link></li>
-              <li><Link href="/certification" className="text-gray-300 hover:text-white">Halal Certification</Link></li>
+              <li><a href="https://halallogistics.xyz" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">Halal Logistics and Supply Chain</a></li>
             </ul>
           </div>
         </div>
