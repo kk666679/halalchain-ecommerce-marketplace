@@ -13,4 +13,5 @@ export declare class AuthService {
         password: string;
         name: string;
     }): Promise<any>;
+    getProfile(userId: string): Promise<any>;
 }

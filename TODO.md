@@ -1,7 +1,0 @@
-- [x] Add "use client" directive to apps/frontend/src/app/layout.tsx to fix the usePathname hook error
-- [x] Add /auth/me endpoint in backend to return current user info
-- [ ] Fix blockchain verify endpoint to return { isValid: boolean; hash: string }
-- [ ] Update frontend Product type to match backend schema (add images field if needed, align vendorName)
-- [ ] Align user roles between frontend and backend
-- [ ] Ensure cart API responses match frontend expectations
-- [x] Test frontend-backend integration

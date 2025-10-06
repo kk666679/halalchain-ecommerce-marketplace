@@ -36,13 +36,28 @@ export class AuthService {
 
   async register(userData: { email: string; password: string; name: string }): Promise<any> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    
+
     const user = await this.prisma.user.create({
       data: {
         email: userData.email,
         password: hashedPassword,
         name: userData.name,
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    return user;
+  }
+
+  async getProfile(userId: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
       select: {
         id: true,
         email: true,
