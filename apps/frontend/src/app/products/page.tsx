@@ -2,9 +2,25 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Product } from '@/types';
 import { productsApi } from '@/lib/api';
 import { ProductCard } from '@/components/ProductCard';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 function ProductsContent() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -215,7 +231,7 @@ function ProductsContent() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading products...</div>
+        <div className="text-center text-foreground">Loading products...</div>
       </div>
     );
   }
@@ -225,32 +241,38 @@ function ProductsContent() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        <h1 className="text-3xl font-bold text-foreground mb-4">
           {searchQuery ? `Search Results for "${searchQuery}"` : 'All Products'}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Discover halal-certified products from trusted vendors
         </p>
       </div>
 
       {products.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No products found</p>
-          <p className="text-gray-400 mt-2">
+          <p className="text-muted-foreground text-lg">No products found</p>
+          <p className="text-muted-foreground/80 mt-2">
             {searchQuery ? 'Try adjusting your search terms' : 'Check back later for new products'}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onViewDetails={handleViewDetails}
-              onAddToCart={handleAddToCart}
-            />
+            <motion.div key={product.id} variants={itemVariants}>
+              <ProductCard
+                product={product}
+                onViewDetails={handleViewDetails}
+                onAddToCart={handleAddToCart}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
@@ -258,7 +280,7 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div className="container mx-auto px-4 py-8"><div className="text-center">Loading products...</div></div>}>
+    <Suspense fallback={<div className="container mx-auto px-4 py-8"><div className="text-center text-foreground">Loading products...</div></div>}>
       <ProductsContent />
     </Suspense>
   );

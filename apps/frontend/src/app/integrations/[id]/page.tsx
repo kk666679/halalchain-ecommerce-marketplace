@@ -41,8 +41,8 @@ export default function IntegrationDetailPage({ params }: IntegrationDetailProps
   if (!integration) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-red-600">Integration not found</h1>
-        <p className="mt-2">The requested integration does not exist.</p>
+        <h1 className="text-2xl font-bold text-destructive">Integration not found</h1>
+        <p className="mt-2 text-muted-foreground">The requested integration does not exist.</p>
         <Button variant="outline" size="sm" onClick={() => router.push('/integrations')}>
           Back to Integrations
         </Button>
@@ -64,20 +64,20 @@ export default function IntegrationDetailPage({ params }: IntegrationDetailProps
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-4">{integration.name}</h1>
-      <p className="text-gray-700 mb-6">{integration.description}</p>
+      <h1 className="text-3xl font-bold text-foreground mb-4">{integration.name}</h1>
+      <p className="text-muted-foreground mb-6">{integration.description}</p>
 
       <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Connection Status</h2>
-        <p className={`inline-block px-3 py-1 rounded-full text-white font-semibold ${
-          connected ? 'bg-green-600' : 'bg-gray-500'
+        <h2 className="text-xl font-semibold text-foreground mb-2">Connection Status</h2>
+        <p className={`inline-block px-3 py-1 rounded-full text-primary-foreground font-semibold ${
+          connected ? 'bg-primary' : 'bg-muted'
         }`}>
           {connected ? 'Connected' : 'Disconnected'}
         </p>
       </div>
 
       <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Actions</h2>
+        <h2 className="text-xl font-semibold text-foreground mb-2">Actions</h2>
         {!connected && (
           <Button variant="primary" size="md" onClick={handleConnect} disabled={syncing}>
             {syncing ? 'Connecting...' : 'Connect'}
@@ -91,8 +91,8 @@ export default function IntegrationDetailPage({ params }: IntegrationDetailProps
       </div>
 
       <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Configuration</h2>
-        <p className="text-gray-600">Configuration options will be available here once connected.</p>
+        <h2 className="text-xl font-semibold text-foreground mb-2">Configuration</h2>
+        <p className="text-muted-foreground">Configuration options will be available here once connected.</p>
       </div>
 
       <Button variant="outline" size="sm" onClick={() => router.push('/integrations')}>

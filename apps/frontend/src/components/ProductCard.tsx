@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { Button } from './Button';
+import { motion } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
@@ -15,7 +16,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onAddToCart,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <motion.div
+      className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+    >
       <div className="relative">
         <Image
           src={product.images[0] || 'https://oq1gkkfo4q0hj5xi.public.blob.vercel-storage.com/Halalchain_20251003_011828_0000.png'}
@@ -32,10 +37,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
-        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{product.description}</p>
-        <p className="text-green-600 font-bold text-lg mb-2">${product.price.toFixed(2)}</p>
-        <p className="text-gray-500 text-sm mb-4">By {product.vendorName}</p>
+        <h3 className="text-lg font-semibold text-card-foreground mb-2">{product.name}</h3>
+        <p className="text-muted-foreground text-sm mb-2 line-clamp-2">{product.description}</p>
+        <p className="text-primary font-bold text-lg mb-2">${product.price.toFixed(2)}</p>
+        <p className="text-muted-foreground text-sm mb-4">By {product.vendorName}</p>
 
         <div className="flex gap-2">
           <Button
@@ -56,6 +61,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

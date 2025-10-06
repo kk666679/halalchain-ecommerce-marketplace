@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { AddToCartDto, UpdateCartItemDto, CheckoutDto } from './dto/cart.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('cart')
@@ -8,32 +7,37 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post()
-  async addToCart(@Request() req, @Body() addToCartDto: AddToCartDto) {
-    return this.cartService.addToCart(req.user.id, addToCartDto);
+  @Post('add')
+  async addToCart(@Request() req: any, @Body() addToCartDto: { productId: string; quantity: number }) {
+    const userId = (req.user as any).id;
+    return await this.cartService.addToCart(userId, addToCartDto.productId, addToCartDto.quantity);
   }
 
   @Get()
-  async getCart(@Request() req) {
-    return this.cartService.getCart(req.user.id);
+  async getCart(@Request() req: any) {
+    const userId = (req.user as any).id;
+    return await this.cartService.getCart(userId);
   }
 
-  @Put(':itemId')
+  @Patch('item/:id')
   async updateCartItem(
-    @Request() req,
-    @Param('itemId') itemId: string,
-    @Body() updateDto: UpdateCartItemDto,
+    @Request() req: any,
+    @Param('id') cartItemId: string,
+    @Body() updateCartDto: { quantity: number },
   ) {
-    return this.cartService.updateCartItem(req.user.id, itemId, updateDto);
+    const userId = (req.user as any).id;
+    return await this.cartService.updateCartItem(userId, cartItemId, updateCartDto.quantity);
   }
 
-  @Delete(':itemId')
-  async removeFromCart(@Request() req, @Param('itemId') itemId: string) {
-    return this.cartService.removeFromCart(req.user.id, itemId);
+  @Delete('item/:id')
+  async removeFromCart(@Request() req: any, @Param('id') cartItemId: string) {
+    const userId = (req.user as any).id;
+    return await this.cartService.removeFromCart(userId, cartItemId);
   }
 
   @Post('checkout')
-  async checkout(@Request() req, @Body() checkoutDto: CheckoutDto) {
-    return this.cartService.checkout(req.user.id, checkoutDto);
+  async checkout(@Request() req: any) {
+    const userId = (req.user as any).id;
+    return await this.cartService.checkout(userId);
   }
 }

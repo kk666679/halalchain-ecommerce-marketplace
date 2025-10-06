@@ -1,22 +1,27 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, UseGuards } from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('blockchain')
 export class BlockchainController {
   constructor(private readonly blockchainService: BlockchainService) {}
 
-  @Get('verify/:productId')
-  async verifyCertification(@Param('productId') productId: string): Promise<boolean> {
-    return this.blockchainService.verifyCertification(productId);
+  @Get('product/:id/halal-status')
+  async getProductHalalStatus(@Param('id') productId: string) {
+    return await this.blockchainService.getProductHalalStatus(productId);
   }
 
-  @Post('certify')
-  async createCertification(@Body() data: { productId: string; halalScore: number; issuedBy: string }) {
-    return this.blockchainService.createCertification(data.productId, data);
+  @Post('certification')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'AUDITOR')
+  async createCertification(@Body() certificationData: any) {
+    return await this.blockchainService.createCertification(certificationData);
   }
 
-  @Get('certifications/:productId')
-  async getCertifications(@Param('productId') productId: string) {
-    return this.blockchainService.getCertifications(productId);
+  @Get('certifications')
+  async getCertifications() {
+    return await this.blockchainService.getCertifications();
   }
 }

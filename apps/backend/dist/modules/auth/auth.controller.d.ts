@@ -7,10 +7,9 @@ export declare class AuthController {
         password: string;
         name: string;
         role?: string;
-    }): Promise<{
-        access_token: string;
-    }>;
+    }): Promise<any>;
     login(req: any): Promise<{
         access_token: string;
     }>;
+    getProfile(req: any): Promise<any>;
 }

@@ -17,26 +17,30 @@ let BlockchainService = class BlockchainService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async verifyCertification(productId) {
-        const certification = await this.prisma.certification.findFirst({
-            where: { productId, status: 'VERIFIED' },
-        });
-        return !!certification;
-    }
-    async createCertification(productId, data) {
-        return this.prisma.certification.create({
-            data: {
-                productId,
-                blockchainTx: 'placeholder_tx_hash',
-                halalScore: data.halalScore,
-                status: 'PENDING',
-                issuedBy: data.issuedBy,
-            },
-        });
-    }
-    async getCertifications(productId) {
-        return this.prisma.certification.findMany({
+    async getProductHalalStatus(productId) {
+        const certification = await this.prisma.halalCertification.findFirst({
             where: { productId },
+        });
+        return certification;
+    }
+    async createCertification(certificationData) {
+        const certification = await this.prisma.halalCertification.create({
+            data: certificationData,
+        });
+        if (certification.halalScore > 75) {
+            await this.prisma.product.update({
+                where: { id: certificationData.productId },
+                data: { isHalalCertified: true },
+            });
+        }
+        return certification;
+    }
+    async getCertifications() {
+        return await this.prisma.halalCertification.findMany({
+            include: {
+                product: true,
+                issuer: true,
+            },
         });
     }
 };

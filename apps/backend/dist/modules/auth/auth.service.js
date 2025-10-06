@@ -45,8 +45,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-const prisma_service_1 = require("../../common/prisma.service");
 const bcrypt = __importStar(require("bcrypt"));
+const prisma_service_1 = require("../../common/prisma.service");
 let AuthService = class AuthService {
     prisma;
     jwtService;
@@ -55,30 +55,42 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async validateUser(email, password) {
-        const user = await this.prisma.user.findUnique({ where: { email } });
-        if (user && (await bcrypt.compare(password, user.password))) {
-            const { password, ...result } = user;
+        const user = await this.prisma.user.findUnique({
+            where: { email },
+        });
+        if (user && await bcrypt.compare(password, user.password)) {
+            const { password: _, ...result } = user;
             return result;
         }
         return null;
     }
     async login(user) {
-        const payload = { email: user.email, sub: user.id, role: user.role };
+        const payload = {
+            email: user.email,
+            sub: user.id,
+            role: user.role
+        };
         return {
             access_token: this.jwtService.sign(payload),
         };
     }
-    async register(data) {
-        const hashedPassword = await bcrypt.hash(data.password, 10);
+    async register(userData) {
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
         const user = await this.prisma.user.create({
             data: {
-                email: data.email,
+                email: userData.email,
                 password: hashedPassword,
-                name: data.name,
-                role: data.role || 'CUSTOMER',
+                name: userData.name,
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                createdAt: true,
             },
         });
-        return this.login(user);
+        return user;
     }
 };
 exports.AuthService = AuthService;

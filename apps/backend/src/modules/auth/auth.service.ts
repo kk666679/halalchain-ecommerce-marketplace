@@ -1,7 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../common/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../../common/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -11,36 +11,47 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (user && await bcrypt.compare(password, user.password)) {
+      const { password: _, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
+  async login(user: any): Promise<{ access_token: string }> {
+    const payload = { 
+      email: user.email, 
+      sub: user.id, 
+      role: user.role 
+    };
+    
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(data: {
-    email: string;
-    password: string;
-    name: string;
-    role?: string;
-  }) {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+  async register(userData: { email: string; password: string; name: string }): Promise<any> {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    
     const user = await this.prisma.user.create({
       data: {
-        email: data.email,
+        email: userData.email,
         password: hashedPassword,
-        name: data.name,
-        role: (data.role as any) || 'CUSTOMER',
+        name: userData.name,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
       },
     });
-    return this.login(user);
+
+    return user;
   }
 }

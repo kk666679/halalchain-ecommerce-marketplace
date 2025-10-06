@@ -8,12 +8,9 @@ export declare class AuthService {
     login(user: any): Promise<{
         access_token: string;
     }>;
-    register(data: {
+    register(userData: {
         email: string;
         password: string;
         name: string;
-        role?: string;
-    }): Promise<{
-        access_token: string;
-    }>;
+    }): Promise<any>;
 }

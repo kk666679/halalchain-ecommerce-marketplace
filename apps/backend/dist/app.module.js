@@ -10,12 +10,23 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
+const auth_module_1 = require("./modules/auth/auth.module");
+const products_module_1 = require("./modules/products/products.module");
+const cart_module_1 = require("./modules/cart/cart.module");
+const blockchain_module_1 = require("./modules/blockchain/blockchain.module");
+const prisma_module_1 = require("./common/prisma.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
+        imports: [
+            prisma_module_1.PrismaModule,
+            auth_module_1.AuthModule,
+            products_module_1.ProductsModule,
+            cart_module_1.CartModule,
+            blockchain_module_1.BlockchainModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

@@ -11,40 +11,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
-const axios_1 = require("@nestjs/axios");
 const prisma_service_1 = require("../../common/prisma.service");
 let ProductsService = class ProductsService {
     prisma;
-    httpService;
-    constructor(prisma, httpService) {
+    constructor(prisma) {
         this.prisma = prisma;
-        this.httpService = httpService;
     }
     async findAll() {
-        return this.prisma.product.findMany({
-            include: { vendor: true, certifications: true },
-        });
+        return await this.prisma.product.findMany();
     }
     async findOne(id) {
-        return this.prisma.product.findUnique({
+        return await this.prisma.product.findUnique({
             where: { id },
-            include: { vendor: true, certifications: true },
         });
     }
-    async create(data) {
-        return this.prisma.product.create({ data });
+    async create(createProductDto) {
+        return await this.prisma.product.create({
+            data: createProductDto,
+        });
     }
-    async update(id, data) {
-        return this.prisma.product.update({ where: { id }, data });
+    async update(id, updateProductDto) {
+        return await this.prisma.product.update({
+            where: { id },
+            data: updateProductDto,
+        });
     }
     async remove(id) {
-        return this.prisma.product.delete({ where: { id } });
+        return await this.prisma.product.delete({
+            where: { id },
+        });
     }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        axios_1.HttpService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

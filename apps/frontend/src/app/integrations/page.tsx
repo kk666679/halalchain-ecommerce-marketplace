@@ -324,22 +324,22 @@ export default function IntegrationsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Commerce Cloud Integrations</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Commerce Cloud Integrations</h1>
+          <p className="text-muted-foreground">
             Connect your HalalChain marketplace with major commerce platforms to expand your reach and streamline operations.
           </p>
         </div>
 
         {Object.entries(groupedIntegrations).map(([category, integrations]) => (
           <div key={category} className="mb-10">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{category}</h2>
+            <h2 className="text-2xl font-semibold text-foreground mb-4">{category}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {integrations.map((integration) => (
-                <div key={integration.id} className="bg-white rounded-lg shadow-md p-6">
+                <div key={integration.id} className="bg-card rounded-lg shadow-md p-6 border">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{integration.name}</h3>
-                      <p className="text-gray-600 text-sm mb-3">{integration.description}</p>
+                      <h3 className="text-xl font-semibold text-card-foreground mb-2">{integration.name}</h3>
+                      <p className="text-muted-foreground text-sm mb-3">{integration.description}</p>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(integration.status)}`}>
                       {integration.status.charAt(0).toUpperCase() + integration.status.slice(1)}
@@ -347,7 +347,7 @@ export default function IntegrationsPage() {
                   </div>
 
                   {integration.lastSync && (
-                    <p className="text-sm text-gray-500 mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                       Last synced: {integration.lastSync}
                     </p>
                   )}
@@ -390,9 +390,9 @@ export default function IntegrationsPage() {
           </div>
         ))}
 
-        <div className="mt-8 bg-blue-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">Integration Benefits</h3>
-          <ul className="text-blue-800 text-sm space-y-1">
+        <div className="mt-8 bg-muted/50 rounded-lg p-6 border">
+          <h3 className="text-lg font-semibold text-card-foreground mb-2">Integration Benefits</h3>
+          <ul className="text-muted-foreground text-sm space-y-1">
             <li>• Automatic product synchronization across platforms</li>
             <li>• Unified order management and fulfillment</li>
             <li>• Real-time inventory updates</li>

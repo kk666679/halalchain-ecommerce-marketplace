@@ -39,7 +39,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading dashboard...</div>
+        <div className="text-center text-foreground">Loading dashboard...</div>
       </div>
     );
   }
@@ -51,12 +51,12 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-card rounded-lg shadow-md p-6 mb-8 border">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Welcome, {user.name}!</h1>
-              <p className="text-gray-600 mt-2">Role: {user.role}</p>
-              <p className="text-gray-600">Email: {user.email}</p>
+              <h1 className="text-3xl font-bold text-card-foreground">Welcome, {user.name}!</h1>
+              <p className="text-muted-foreground mt-2">Role: {user.role}</p>
+              <p className="text-muted-foreground">Email: {user.email}</p>
             </div>
             <div className="flex items-center space-x-2">
               {user.isVerified && (
@@ -74,30 +74,30 @@ export default function DashboardPage() {
         {/* Role-specific content */}
         {user.role === 'vendor' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">My Products</h3>
-              <p className="text-gray-600 mb-4">Manage your product listings</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">My Products</h3>
+              <p className="text-muted-foreground mb-4">Manage your product listings</p>
               <Button variant="primary" size="sm">
                 View Products
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Orders</h3>
-              <p className="text-gray-600 mb-4">Track and manage orders</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Orders</h3>
+              <p className="text-muted-foreground mb-4">Track and manage orders</p>
               <Button variant="primary" size="sm">
                 View Orders
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Analytics</h3>
-              <p className="text-gray-600 mb-4">View sales performance</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Analytics</h3>
+              <p className="text-muted-foreground mb-4">View sales performance</p>
               <Button variant="primary" size="sm">
                 View Analytics
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Integrations</h3>
-              <p className="text-gray-600 mb-4">Connect with commerce platforms</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Integrations</h3>
+              <p className="text-muted-foreground mb-4">Connect with commerce platforms</p>
               <Button variant="primary" size="sm" onClick={() => router.push('/integrations')}>
                 Manage Integrations
               </Button>
@@ -107,16 +107,16 @@ export default function DashboardPage() {
 
         {user.role === 'buyer' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">My Orders</h3>
-              <p className="text-gray-600 mb-4">Track your order history</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">My Orders</h3>
+              <p className="text-muted-foreground mb-4">Track your order history</p>
               <Button variant="primary" size="sm">
                 View Orders
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Wishlist</h3>
-              <p className="text-gray-600 mb-4">Manage your saved products</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Wishlist</h3>
+              <p className="text-muted-foreground mb-4">Manage your saved products</p>
               <Button variant="primary" size="sm">
                 View Wishlist
               </Button>
@@ -126,37 +126,37 @@ export default function DashboardPage() {
 
         {user.role === 'admin' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Users</h3>
-              <p className="text-gray-600 mb-4">Manage platform users</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Users</h3>
+              <p className="text-muted-foreground mb-4">Manage platform users</p>
               <Button variant="primary" size="sm">
                 Manage Users
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Products</h3>
-              <p className="text-gray-600 mb-4">Review product listings</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Products</h3>
+              <p className="text-muted-foreground mb-4">Review product listings</p>
               <Button variant="primary" size="sm">
                 Review Products
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Orders</h3>
-              <p className="text-gray-600 mb-4">Monitor all orders</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Orders</h3>
+              <p className="text-muted-foreground mb-4">Monitor all orders</p>
               <Button variant="primary" size="sm">
                 View Orders
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Analytics</h3>
-              <p className="text-gray-600 mb-4">Platform insights</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Analytics</h3>
+              <p className="text-muted-foreground mb-4">Platform insights</p>
               <Button variant="primary" size="sm">
                 View Analytics
               </Button>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold mb-2">Integrations</h3>
-              <p className="text-gray-600 mb-4">Manage commerce platform integrations</p>
+            <div className="bg-card rounded-lg shadow-md p-6 border">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Integrations</h3>
+              <p className="text-muted-foreground mb-4">Manage commerce platform integrations</p>
               <Button variant="primary" size="sm" onClick={() => router.push('/integrations')}>
                 Manage Integrations
               </Button>
@@ -165,8 +165,8 @@ export default function DashboardPage() {
         )}
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div className="bg-card rounded-lg shadow-md p-6 border">
+          <h2 className="text-xl font-semibold text-card-foreground mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
             <Button variant="outline" onClick={() => router.push('/products')}>
               Browse Products

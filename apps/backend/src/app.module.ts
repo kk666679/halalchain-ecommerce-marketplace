@@ -8,7 +8,13 @@ import { BlockchainModule } from './modules/blockchain/blockchain.module';
 import { PrismaModule } from './common/prisma.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, ProductsModule, CartModule, BlockchainModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    ProductsModule,
+    CartModule,
+    BlockchainModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

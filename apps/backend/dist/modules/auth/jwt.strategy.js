@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtStrategy = void 0;
-const common_1 = require("@nestjs/common");
-const passport_1 = require("@nestjs/passport");
 const passport_jwt_1 = require("passport-jwt");
+const passport_1 = require("@nestjs/passport");
+const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../common/prisma.service");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     prisma;
@@ -20,14 +20,23 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET || 'secretKey',
+            secretOrKey: process.env.JWT_SECRET || 'secret',
         });
         this.prisma = prisma;
     }
     async validate(payload) {
         const user = await this.prisma.user.findUnique({
             where: { id: payload.sub },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+            },
         });
+        if (!user) {
+            throw new Error('User not found');
+        }
         return user;
     }
 };

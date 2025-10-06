@@ -6,208 +6,111 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from './Button';
 import CartIcon from './CartIcon';
+import { ThemeToggle } from './theme-toggle';
 import { Menu, X } from 'lucide-react';
 
-export const Header: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-    }
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/');
-  };
-
-  const isLoggedIn = typeof window !== 'undefined' && localStorage.getItem('token');
 
   return (
-    <header className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="https://oq1gkkfo4q0hj5xi.public.blob.vercel-storage.com/Halalchain_20251003_011847_0000.svg"
-              alt="HalalChain"
-              width={120}
-              height={40}
-              className="h-10 w-auto"
-            />
+    <header className="bg-background border-b border-border shadow-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <Image src="/halalchain-logo.svg" alt="HalalChain Logo" width={40} height={40} />
+            <span className="font-bold text-xl text-primary">HalalChain</span>
           </Link>
 
-          {/* Search Bar - Hidden on mobile */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
-              >
-                🔍
-              </button>
-            </div>
-          </form>
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link href="/" className="text-foreground hover:text-primary transition-colors">
+            Home
+          </Link>
+          <Link href="/products" className="text-foreground hover:text-primary transition-colors">
+            Products
+          </Link>
+          <Link href="/integrations" className="text-foreground hover:text-primary transition-colors">
+            Integrations
+          </Link>
+          <Link href="/halal-certification" className="text-foreground hover:text-primary transition-colors">
+            Halal Certification
+          </Link>
+          <Link href="/dashboard" className="text-foreground hover:text-primary transition-colors">
+            Dashboard
+          </Link>
+        </nav>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4">
-            <Link href="/products" className="text-gray-700 hover:text-green-600">
-              Products
-            </Link>
-            <Link href="/integrations" className="text-gray-700 hover:text-green-600">
-              Integrations
-            </Link>
-            <Link href="/halal-certification" className="text-gray-700 hover:text-green-600">
-              Halal Certification
-            </Link>
-
-            {isLoggedIn ? (
-              <>
-                <Link href="/dashboard" className="text-gray-700 hover:text-green-600">
-                  Dashboard
-                </Link>
-                <CartIcon />
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <CartIcon />
-                <Link href="/auth/login">
-                  <Button variant="outline" size="sm">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button variant="primary" size="sm">
-                    Register
-                  </Button>
-                </Link>
-              </>
-            )}
-          </nav>
+        {/* Right side icons */}
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          <CartIcon />
+          {/* User menu or auth buttons */}
+          <Button variant="outline" size="sm" onClick={() => router.push('/auth/login')}>
+            Login
+          </Button>
+          <Button variant="primary" size="sm" onClick={() => router.push('/auth/register')}>
+            Register
+          </Button>
 
           {/* Mobile menu button */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-gray-700 hover:text-green-600"
+            className="md:hidden p-2 rounded-md text-foreground hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            {/* Mobile Search */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
-                >
-                  🔍
-                </button>
-              </div>
-            </form>
-
-            {/* Mobile Nav Links */}
-            <nav className="flex flex-col space-y-2">
-              <Link
-                href="/products"
-                className="text-gray-700 hover:text-green-600 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <nav className="md:hidden bg-background border-t border-border shadow-inner">
+          <ul className="flex flex-col space-y-2 p-4">
+            <li>
+              <Link href="/" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/products" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Products
               </Link>
-              <Link
-                href="/integrations"
-                className="text-gray-700 hover:text-green-600 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
+            </li>
+            <li>
+              <Link href="/integrations" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Integrations
               </Link>
-
-              {isLoggedIn ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="text-gray-700 hover:text-green-600 py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/cart"
-                    className="text-gray-700 hover:text-green-600 py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Cart
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      handleLogout();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-start"
-                  >
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/cart"
-                    className="text-gray-700 hover:text-green-600 py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Cart
-                  </Link>
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Button variant="outline" size="sm" className="w-full">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Button variant="primary" size="sm" className="w-full">
-                      Register
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-        )}
-      </div>
+            </li>
+            <li>
+              <Link href="/halal-certification" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Halal Certification
+              </Link>
+            </li>
+            <li>
+              <Link href="/dashboard" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Button variant="outline" size="sm" onClick={() => { setMobileMenuOpen(false); router.push('/auth/login'); }}>
+                Login
+              </Button>
+            </li>
+            <li>
+              <Button variant="primary" size="sm" onClick={() => { setMobileMenuOpen(false); router.push('/auth/register'); }}>
+                Register
+              </Button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </header>
   );
-};
+}
+

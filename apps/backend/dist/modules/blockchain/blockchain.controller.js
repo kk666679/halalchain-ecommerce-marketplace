@@ -15,41 +15,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlockchainController = void 0;
 const common_1 = require("@nestjs/common");
 const blockchain_service_1 = require("./blockchain.service");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const roles_guard_1 = require("../auth/roles.guard");
+const roles_decorator_1 = require("../auth/roles.decorator");
 let BlockchainController = class BlockchainController {
     blockchainService;
     constructor(blockchainService) {
         this.blockchainService = blockchainService;
     }
-    async verifyCertification(productId) {
-        return this.blockchainService.verifyCertification(productId);
+    async getProductHalalStatus(productId) {
+        return await this.blockchainService.getProductHalalStatus(productId);
     }
-    async createCertification(data) {
-        return this.blockchainService.createCertification(data.productId, data);
+    async createCertification(certificationData) {
+        return await this.blockchainService.createCertification(certificationData);
     }
-    async getCertifications(productId) {
-        return this.blockchainService.getCertifications(productId);
+    async getCertifications() {
+        return await this.blockchainService.getCertifications();
     }
 };
 exports.BlockchainController = BlockchainController;
 __decorate([
-    (0, common_1.Get)('verify/:productId'),
-    __param(0, (0, common_1.Param)('productId')),
+    (0, common_1.Get)('product/:id/halal-status'),
+    __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], BlockchainController.prototype, "verifyCertification", null);
+], BlockchainController.prototype, "getProductHalalStatus", null);
 __decorate([
-    (0, common_1.Post)('certify'),
+    (0, common_1.Post)('certification'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('ADMIN', 'AUDITOR'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], BlockchainController.prototype, "createCertification", null);
 __decorate([
-    (0, common_1.Get)('certifications/:productId'),
-    __param(0, (0, common_1.Param)('productId')),
+    (0, common_1.Get)('certifications'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BlockchainController.prototype, "getCertifications", null);
 exports.BlockchainController = BlockchainController = __decorate([
