@@ -1,2 +1,11 @@
-node_modules
-.vercel
+node_modules/
+.vercel/
+apps/
+backend/
+docs/
+environment/
+.env/
+docs
+backend
+environment
+node modules

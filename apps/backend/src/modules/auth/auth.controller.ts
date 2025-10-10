@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  async register(
+  async register(https://github.com/codespaces/ominous-dollop-pjprrv799qxxhrv7v?editor=web
     @Body()
     body: {
       email: string;

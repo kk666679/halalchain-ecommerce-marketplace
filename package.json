@@ -1,6 +1,8 @@
 {
   "name": "halalchain-ecommerce-marketplace",
   "private": true,
+  "license": "MIT",
+  "copyright": "Copyright (c) 2025 HALALCHAIN Frontend",
   "workspaces": [
     "apps/*"
   ],
