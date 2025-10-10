@@ -14,35 +14,35 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 🔗 **Live Demo**: [halalchain.xyz](https://halalchain.xyz)
-📖 **Documentation**: [docs.halal-chain.com](https://docs.halalchain.xyz)
+📖 **Documentation**: [docs.halalchain.xyz](https://docs.halalchain.xyz)
 
 ---
 
 ## 🌟 Key Features
 
-### 🏪 Core E-commerce
+### 🏪 Implemented Core Features
 
-* **Blockchain Verification** – Immutable Halal certification tracking
-* **AI Multi-Agent System** – Automated vendor & product analysis
-* **Multivendor Marketplace** – Vendor & catalog management
-* **Real-time Analytics** – Business insights with live dashboards
-* **Shariah Compliance** – Full halal monitoring & validation
+* **User Authentication** – Secure login/register with JWT and role-based access (Customer, Vendor, Admin)
+* **Product Catalog** – Browse, search, and view Halal-certified products
+* **Shopping Cart** – Add/remove items, manage quantities
+* **Blockchain Verification** – Basic Halal certification tracking via blockchain hashes
+* **AI Site Generator** – Prompt-based site creation and analysis tools
 
-### 📦 Supply Chain Intelligence
+### 🚧 Planned Features
 
-* **Automated Inventory** – Live stock optimization
-* **Warehouse Management** – Multi-location smart storage
-* **Logistics Integration** – Shipment tracking & delivery routing
-* **Quality Control** – Blockchain-backed Halal compliance checks
-* **AI Forecasting** – Demand prediction & stock replenishment
-* **Procurement Automation** – Supplier selection & auto-ordering
+* **Multivendor Marketplace** – Vendor management and dashboards
+* **Order Processing** – Full order lifecycle with payments and shipments
+* **Supply Chain Intelligence** – Inventory optimization, warehouse management, logistics integration
+* **Advanced AI System** – Multi-agent automation for fraud detection, forecasting, and compliance
+* **Real-time Analytics** – Live dashboards for business insights
+* **Integrations** – Magento synchronization, payment gateways (Stripe, PayPal)
 
 ### 🔧 Technical Foundation
 
-* **Cloud-Native** – OCI-ready with auto-scaling
-* **High Performance** – Redis caching + optimized queries
-* **Enterprise Security** – JWT, RBAC & blockchain immutability
-* **Magento Integration** – AliExpress product synchronization
+* **Modern Stack** – Next.js 15 (frontend), NestJS 11 (backend), Prisma ORM
+* **Performance** – Turbopack for dev, Framer Motion animations, optimized queries
+* **Security** – JWT authentication, RBAC guards, encrypted data
+* **Database** – PostgreSQL with comprehensive schema for e-commerce entities
 
 ---
 
@@ -50,58 +50,28 @@
 
 ```mermaid
 graph TB
-    WEB[Next.js Frontend<br/>Tailwind CSS v4]
-    ADM[Vendor Dashboard]
-    MOB[Mobile Apps]
-    GW[API Gateway<br/>NestJS + Redis]
-    MGT[Magento Backend<br/>GraphQL/REST]
-    
+    WEB[Next.js Frontend<br/>Tailwind CSS + Framer Motion]
+    GW[API Gateway<br/>NestJS]
+
     AUTH[Auth Service]
     PROD[Product Service]
-    ORDER[Order Service]
-    VENDOR[Vendor Service]
-    INVENTORY[Inventory Service]
-    WAREHOUSE[Warehouse Service]
-    PROCUREMENT[Procurement Service]
-    LOGISTICS[Logistics Service]
-    SUPPLIER[Supplier Service]
-    QUALITY[Quality Control]
-    FORECAST[Forecasting Service]
+    CART[Cart Service]
     BLOCKCHAIN[Blockchain Service]
-    AI[A.I. Agents]
-    NOTIFY[Notification Service]
-    PAYMENT[Stripe/PayPal]
-    
+    AI[AI Tools Service]
+
     DB[(PostgreSQL Neon)]
-    REDIS[(Redis Cache)]
-    BLOB[Vercel Blob]
     BC[Blockchain Network]
-    
+
     WEB --> GW
-    ADM --> GW
-    MOB --> GW
-    
-    GW --> MGT
-    MGT --> GW
-    
-    GW --> AUTH & PROD & ORDER & VENDOR
-    GW --> INVENTORY & WAREHOUSE & PROCUREMENT & LOGISTICS & SUPPLIER & QUALITY & FORECAST & PAYMENT
-    
-    PROD --> MGT
-    VENDOR --> MGT
-    ORDER --> MGT
-    
-    INVENTORY --> PROD & WAREHOUSE & PROCUREMENT
-    WAREHOUSE --> LOGISTICS
-    PROCUREMENT --> SUPPLIER
-    QUALITY --> PROD
-    FORECAST --> INVENTORY
-    
-    INVENTORY --> DB & REDIS
-    FORECAST --> AI
-    QUALITY --> BLOCKCHAIN
-    PAYMENT --> MGT
+    GW --> AUTH & PROD & CART & BLOCKCHAIN & AI
+    AUTH --> DB
+    PROD --> DB
+    CART --> DB
+    BLOCKCHAIN --> BC
+    AI --> DB
 ```
+
+*Note: Additional services (Orders, Vendors, Inventory, Supply Chain, etc.) are defined in the database schema and planned for future implementation.*
 
 ---
 
@@ -149,9 +119,6 @@ sequenceDiagram
 
 * Node.js **22.x+**
 * PostgreSQL (Neon recommended)
-* Redis **7.x+**
-* Magento **2.4.x**
-* Docker & Docker Compose
 
 ### Installation
 
@@ -160,6 +127,7 @@ git clone https://github.com/halalchain/halalchain-ecommerce.git
 cd halalchain-ecommerce
 npm install
 cp .env.example .env
+# Edit .env with your database URL and other configs
 nano .env
 ```
 
@@ -169,84 +137,207 @@ nano .env
 npx prisma generate
 npx prisma db push
 npm run db:seed
-npm run sync:magento
 ```
 
 ### Development
 
 ```bash
-npm run dev          # Full stack
-npm run start:dev    # Backend only
+npm run dev          # Full stack (backend + frontend)
+npm run backend:dev  # Backend only
 npm run frontend:dev # Frontend only
-npm test             # Unit tests
-npm run test:e2e     # End-to-end tests
+npm test             # Backend unit tests
+npm run test:e2e     # Backend end-to-end tests
 ```
 
 ### Production
 
 ```bash
 npm run build
-npm run start:prod
-docker-compose up -d
+npm run start
 ```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```bash
+# Database
+DATABASE_URL="postgresql://username:password@host:port/database"
+
+# JWT
+JWT_SECRET="your-jwt-secret-key"
+
+# Blockchain (optional)
+BLOCKCHAIN_RPC_URL="https://your-blockchain-rpc"
+BLOCKCHAIN_PRIVATE_KEY="your-private-key"
+
+# AI (optional)
+ANTHROPIC_API_KEY="your-anthropic-key"
+
+# Frontend
+NEXT_PUBLIC_API_URL="http://localhost:3001"
+```
+
+### Database Configuration
+
+The application uses Prisma with PostgreSQL. The schema includes all necessary models for e-commerce, supply chain, and AI features. See [docs/README-DATABASE.md](docs/README-DATABASE.md) for detailed database setup.
 
 ---
 
 ## 🧩 Project Structure
 
-```
-halalchain-ecommerce/
-├── apps/
-│   ├── frontend/        # Next.js app
-│   └── backend/         # NestJS app
-│       ├── src/
-│       │   ├── auth/            # Authentication
-│       │   ├── products/        # Product module
-│       │   ├── vendors/         # Vendor management
-│       │   ├── orders/          # Orders
-│       │   ├── blockchain/      # Verification
-│       │   ├── ai/              # AI agents
-│       │   ├── supply-chain/    # Supply chain services
-│       │   └── common/          # Shared utils
-│       └── prisma/
-│           └── schema.prisma
-├── magento-integration/  # Magento module
-├── docker-compose.yml
-└── README.md
+```mermaid
+flowchart TD
+    A[halalchain-ecommerce] --> B[apps]
+    B --> C[frontend NextJS]
+    B --> D[backend NestJS]
+    D --> D1[auth]
+    D --> D2[products]
+    D --> D3[vendors]
+    D --> D4[orders]
+    D --> D5[blockchain]
+    D --> D6[ai]
+    D --> D7[supply-chain]
+    D --> D8[common]
+    D --> D9[prisma schema.prisma]
+    A --> E[magento-integration]
+    A --> F[docker-compose.yml]
+    A --> G[README.md]
 ```
 
 ---
 
 ## 🔌 API Highlights
 
-* **Auth**: `/auth/login`, `/auth/register`, `/auth/register/vendor`
-* **Products**: `/products`, `/products/search`, `/products/:id`
-* **Supply Chain**: `/inventory/products/:id/stock`, `/procurement/low-stock-alerts`
-* **Vendors**: `/vendors/:id/dashboard`, `/vendors/:id/orders`
+### Authentication
+- `POST /auth/login` - User login
+- `POST /auth/register` - User registration
+
+### Products
+- `GET /products` - List all products
+- `GET /products/search?q=term` - Search products
+- `GET /products/:id` - Get product details
+
+### Cart
+- `GET /cart` - Get user's cart
+- `POST /cart/add` - Add item to cart
+- `POST /cart/remove` - Remove item from cart
+
+### Blockchain
+- `POST /blockchain/verify` - Verify Halal certification
+- `POST /blockchain/certify` - Create new certification
+
+### AI Tools
+- `POST /ai-tools/generate` - Generate content with AI
+- `POST /ai-tools/analyze` - Analyze product/vendor data
+
+**Base URL**: `http://localhost:3001` (development)
+
+For complete API documentation, see the NestJS Swagger docs at `/api` when running the backend.
+
+---
+
+## 📈 Current Status
+
+### ✅ Implemented Features
+
+- **Core E-commerce**: User authentication, product catalog, shopping cart
+- **Blockchain Integration**: Halal certification verification
+- **AI Tools**: Basic AI-powered features for site generation and analysis
+- **Modern Frontend**: Next.js with animations, responsive design, dark/light mode
+- **Database**: Comprehensive Prisma schema for all entities
+
+### 🚧 In Development
+
+- **Order Management**: Order processing and fulfillment
+- **Vendor Dashboard**: Multivendor marketplace features
+- **Supply Chain**: Inventory, procurement, logistics automation
+- **Advanced AI**: Multi-agent system for fraud detection, forecasting
+- **Integrations**: Magento sync, payment gateways
+
+### 📊 Recent Improvements
+
+- Fixed TypeScript compilation errors
+- Enhanced animations with Framer Motion and Lenis
+- Improved accessibility and performance
+- Updated dependencies for React 19 compatibility
+
+See [docs/ANALYSIS_REPORT.md](docs/ANALYSIS_REPORT.md) for detailed fixes.
+
+---
+
+## 🛠️ Development Notes
+
+- **Monorepo Setup**: Uses npm workspaces for coordinated builds
+- **Frontend**: Turbopack for fast development, Framer Motion for animations
+- **Backend**: NestJS with modular architecture, Prisma for ORM
+- **Styling**: Tailwind CSS with custom themes and CSS variables
+- **Testing**: Jest for backend, focus on API testing
 
 ---
 
 ## 🤖 AI Agent System
 
+### Current Implementation
+
+The AI system uses Anthropic Claude 3.5 Sonnet with tool-calling capabilities for intelligent content generation and data analysis.
+
+#### Site Generation Workflow
+
+```mermaid
+graph TD
+    A[User Prompt] --> B[AI Tools Controller]
+    B --> C[Claude 3.5 Sonnet]
+    C --> D{Uses Tools?}
+    D -->|Yes| E[Tool Execution]
+    E --> F[Database Query/API Call/Translation/SEO Analysis]
+    F --> G[Tool Results]
+    G --> C
+    D -->|No| H[Direct Response]
+    H --> I[Parse Site Structure]
+    G --> I
+    I --> J[Return Generated Site]
+```
+
+#### Available Tools
+
+- **Database Query**: Safe SELECT queries for dynamic data retrieval
+- **API Request**: Authenticated external API calls
+- **Translation**: Multi-language text translation via LibreTranslate
+- **SEO Analyzer**: Webpage SEO assessment and recommendations
+
+#### Planned Multi-Agent System
+
 ```mermaid
 graph TB
-    A[AI Orchestrator] --> B[Fraud Detection]
-    A --> C[Customer Sentiment]
-    A --> D[Halal Compliance]
-    A --> E[Vendor Performance]
-    A --> F[Supply Chain Optimization]
-    A --> G[Demand Forecasting]
+    A[AI Orchestrator] --> B[Fraud Detection Agent]
+    A --> C[Customer Sentiment Agent]
+    A --> D[Halal Compliance Agent]
+    A --> E[Vendor Performance Agent]
+    A --> F[Supply Chain Optimization Agent]
+    A --> G[Demand Forecasting Agent]
+
+    B --> H[Blockchain Verification]
+    C --> I[Review Analysis]
+    D --> J[Certification Checks]
+    E --> K[Metrics Calculation]
+    F --> L[Inventory Forecasting]
+    G --> M[Sales Prediction]
 ```
+
+For detailed AI implementation, see [docs/AI_README.md](docs/AI_README.md).
 
 ---
 
-## 🐳 Docker Deployment
+## 🚀 Deployment
 
-```bash
-docker-compose up -d
-docker-compose logs -f api-gateway
-docker-compose up -d --scale inventory-service=3
-```
+- **Frontend**: Deploy to Vercel or similar with `npm run frontend:build`
+- **Backend**: Deploy Node.js app with `npm run backend:build` and `npm run backend:start`
+- **Database**: Use Neon PostgreSQL in production
 
 ---
 
@@ -261,11 +352,40 @@ docker-compose up -d --scale inventory-service=3
 
 ## 🤝 Contributing
 
-1. Fork the repo
-2. Create a feature branch (`git checkout -b feature/awesome`)
-3. Commit (`git commit -m 'Add awesome feature'`)
-4. Push (`git push origin feature/awesome`)
-5. Open a Pull Request
+We welcome contributions to HalalChain! Please follow these guidelines:
+
+### Development Setup
+1. Fork the repository
+2. Clone your fork: `git clone https://github.com/your-username/halalchain-ecommerce.git`
+3. Install dependencies: `npm install`
+4. Set up the database: Follow the [Database Setup](#database-setup) instructions
+5. Start development: `npm run dev`
+
+### Code Style
+- Use TypeScript for all new code
+- Follow ESLint and Prettier configurations
+- Use meaningful commit messages
+- Write tests for new features
+
+### Pull Request Process
+1. Create a feature branch: `git checkout -b feature/your-feature-name`
+2. Make your changes and ensure tests pass: `npm test`
+3. Commit your changes: `git commit -m 'Add: brief description of changes'`
+4. Push to your branch: `git push origin feature/your-feature-name`
+5. Open a Pull Request with a clear description
+
+### Areas for Contribution
+- Frontend UI/UX improvements
+- Backend API development
+- Blockchain integration enhancements
+- AI tool expansions
+- Supply chain features
+- Documentation updates
+
+### Reporting Issues
+- Use GitHub Issues for bugs and feature requests
+- Provide detailed steps to reproduce bugs
+- Include environment information (Node.js version, OS, etc.)
 
 ---
 
