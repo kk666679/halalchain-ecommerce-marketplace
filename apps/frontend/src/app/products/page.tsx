@@ -223,11 +223,6 @@ function ProductsContent() {
     window.location.href = `/products/${product.id}`;
   };
 
-  const handleAddToCart = (product: Product) => {
-    // TODO: Implement cart functionality
-    alert(`Added ${product.name} to cart`);
-  };
-
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -268,7 +263,6 @@ function ProductsContent() {
               <ProductCard
                 product={product}
                 onViewDetails={handleViewDetails}
-                onAddToCart={handleAddToCart}
               />
             </motion.div>
           ))}

@@ -53,7 +53,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-300">
-          <p>&copy; 2025 HalalChain. All rights reserved.</p>
+          <p>&copy; 2025 Powered by HalalChain AI • Ethical Commerce for Everyone.</p>
         </div>
       </div>
     </footer>

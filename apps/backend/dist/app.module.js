@@ -15,6 +15,7 @@ const products_module_1 = require("./modules/products/products.module");
 const cart_module_1 = require("./modules/cart/cart.module");
 const blockchain_module_1 = require("./modules/blockchain/blockchain.module");
 const prisma_module_1 = require("./common/prisma.module");
+const ai_tools_module_1 = require("./modules/ai-tools/ai-tools.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,6 +27,7 @@ exports.AppModule = AppModule = __decorate([
             products_module_1.ProductsModule,
             cart_module_1.CartModule,
             blockchain_module_1.BlockchainModule,
+            ai_tools_module_1.AiToolsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

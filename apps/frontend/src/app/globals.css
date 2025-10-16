@@ -2,68 +2,150 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+/* HalalChain Neon Platform Theme - Neon-Tech Theme */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+/* Dark Theme (Default) */
+:root {
+  /* Neon-Tech Color Palette */
+  --primary-neon: #00f5ff;
+  --secondary-neon: #9d4edd;
+  --accent-neon: #ff006e;
+  --success-neon: #38b000;
+  --warning-neon: #ffbe0b;
+  --error-neon: #fb5607;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+  /* Background Gradients */
+  --dark-bg-start: #050508;
+  --dark-bg-end: #0a0a12;
+  --neon-bg-gradient: linear-gradient(135deg, #050508 0%, #0a0a12 50%, #1a1a2e 100%);
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(0, 245, 255, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 245, 255, 0.1);
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+  /* Light Theme (Default) */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
 
-    --radius: 0.5rem;
-  }
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 3.9%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+  --primary: 180 100% 50%; /* #00f5ff */
+  --primary-foreground: 0 0% 0%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+  --secondary: 270 70% 70%; /* #9d4edd */
+  --secondary-foreground: 0 0% 100%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+  --muted: 0 0% 96.1%;
+  --muted-foreground: 0 0% 45.1%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+  --accent: 330 100% 50%; /* #ff006e */
+  --accent-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+  --destructive: 330 100% 50%;
+  --destructive-foreground: 0 0% 98%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 180 100% 50%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+  --radius: 0.5rem;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
+  --chart-1: 180 100% 50%;
+  --chart-2: 270 70% 70%;
+  --chart-3: 330 100% 50%;
+  --chart-4: 120 100% 50%;
+  --chart-5: 60 100% 50%;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  /* Neon-Tech Color Palette (Adjusted for light theme) */
+  --primary-neon: #0066cc;
+  --secondary-neon: #7c3aed;
+  --accent-neon: #dc2626;
+  --success-neon: #16a34a;
+  --warning-neon: #ca8a04;
+  --error-neon: #dc2626;
+
+  /* Background Gradients */
+  --neon-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 102, 204, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  /* Text Colors */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+}
+
+.dark {
+  /* Dark Theme with Neon Enhancements */
+  --background: 240 10% 5%; /* #050508 */
+  --foreground: 0 0% 98%;
+
+  --card: 240 10% 8%; /* #0a0a12 */
+  --card-foreground: 0 0% 98%;
+
+  --popover: 240 10% 8%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 180 100% 50%;
+  --primary-foreground: 0 0% 0%;
+
+  --secondary: 270 70% 70%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 240 10% 15%;
+  --muted-foreground: 0 0% 63.9%;
+
+  --accent: 330 100% 50%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 330 100% 50%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 10% 20%;
+  --input: 240 10% 20%;
+  --ring: 180 100% 50%;
+
+  --chart-1: 180 100% 50%;
+  --chart-2: 270 70% 70%;
+  --chart-3: 330 100% 50%;
+  --chart-4: 120 100% 50%;
+  --chart-5: 60 100% 50%;
 }
 
 @layer base {
@@ -80,10 +162,96 @@
   .backface-hidden {
     backface-visibility: hidden;
   }
+
+  /* Neon Glow Effects */
+  .neon-glow {
+    box-shadow: 0 0 20px var(--primary-neon), 0 0 40px var(--primary-neon), 0 0 60px var(--primary-neon);
+  }
+
+  .neon-glow-secondary {
+    box-shadow: 0 0 15px var(--secondary-neon), 0 0 30px var(--secondary-neon);
+  }
+
+  .neon-glow-accent {
+    box-shadow: 0 0 15px var(--accent-neon), 0 0 30px var(--accent-neon);
+  }
+
+  .neon-glow-success {
+    box-shadow: 0 0 15px var(--success-neon), 0 0 30px var(--success-neon);
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+
+  /* Neon glow effects */
+  .neonGlow {
+    box-shadow: 0 0 20px var(--primary-neon), 0 0 40px var(--primary-neon), 0 0 60px var(--primary-neon);
+  }
+
+  .neonGlowSecondary {
+    box-shadow: 0 0 15px var(--secondary-neon), 0 0 30px var(--secondary-neon);
+  }
+
+  .neonGlowAccent {
+    box-shadow: 0 0 15px var(--accent-neon), 0 0 30px var(--accent-neon);
+  }
+
+  /* Gradient Backgrounds */
+  .neon-gradient {
+    background: linear-gradient(135deg, var(--dark-bg-start) 0%, var(--dark-bg-end) 100%);
+  }
+
+  .primary-gradient {
+    background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+  }
+
+  .accent-gradient {
+    background: linear-gradient(135deg, var(--accent-neon), var(--primary-neon));
+  }
+
+  /* Text Effects */
+  .neon-text {
+    color: var(--primary-neon);
+    text-shadow: 0 0 10px var(--primary-neon), 0 0 20px var(--primary-neon);
+  }
+
+  .neon-text-secondary {
+    color: var(--secondary-neon);
+    text-shadow: 0 0 10px var(--secondary-neon), 0 0 20px var(--secondary-neon);
+  }
+
+  .neon-text-accent {
+    color: var(--accent-neon);
+    text-shadow: 0 0 10px var(--accent-neon), 0 0 20px var(--accent-neon);
+  }
 }
 
 /* Add smooth transition for theme changes */
 * {
   transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color
     0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    background: var(--neon-bg-gradient);
+    @apply text-foreground;
+  }
 }

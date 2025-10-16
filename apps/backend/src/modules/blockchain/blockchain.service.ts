@@ -6,15 +6,21 @@ export class BlockchainService {
   constructor(private prisma: PrismaService) {}
 
   async getProductHalalStatus(productId: string) {
-    const certification = await this.prisma.halalCertification.findFirst({
+    const certification = await this.prisma.certification.findFirst({
       where: { productId },
+      orderBy: { issuedAt: 'desc' },
     });
 
-    return certification;
+    return certification ? {
+      isValid: certification.status === 'VERIFIED',
+      hash: certification.blockchainTx,
+      score: certification.halalScore,
+      status: certification.status,
+    } : null;
   }
 
   async createCertification(certificationData: any) {
-    const certification = await this.prisma.halalCertification.create({
+    const certification = await this.prisma.certification.create({
       data: certificationData,
     });
 
@@ -22,7 +28,7 @@ export class BlockchainService {
     if (certification.halalScore > 75) {
       await this.prisma.product.update({
         where: { id: certificationData.productId },
-        data: { isHalalCertified: true },
+        data: { halalCertified: true },
       });
     }
 
@@ -30,10 +36,9 @@ export class BlockchainService {
   }
 
   async getCertifications() {
-    return await this.prisma.halalCertification.findMany({
+    return await this.prisma.certification.findMany({
       include: {
         product: true,
-        issuer: true,
       },
     });
   }

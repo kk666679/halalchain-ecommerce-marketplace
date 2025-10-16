@@ -1,20 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { Button } from './Button';
 import { motion } from 'framer-motion';
+import { useCart } from '@/hooks/useCart';
+import { blockchainApi } from '@/lib/api';
+import { Shield, ShoppingCart } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
   onViewDetails?: (product: Product) => void;
-  onAddToCart?: (product: Product) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onViewDetails,
-  onAddToCart,
 }) => {
+  const { addToCart, loading: cartLoading } = useCart();
+  const [verifying, setVerifying] = useState(false);
+  const [halalStatus, setHalalStatus] = useState<{ isValid: boolean } | null>(null);
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(product.id, 1);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+    }
+  };
+
+  const handleVerifyHalal = async () => {
+    if (!product.isHalalCertified) return;
+    
+    try {
+      setVerifying(true);
+      const status = await blockchainApi.getHalalStatus(product.id) as { isValid: boolean } | null;
+      setHalalStatus(status);
+    } catch (error) {
+      console.error('Failed to verify halal status:', error);
+    } finally {
+      setVerifying(false);
+    }
+  };
   return (
     <motion.div
       className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border"
@@ -30,8 +56,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           className="w-full h-48 object-cover"
         />
         {product.isHalalCertified && (
-          <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-            Halal Certified
+          <button
+            onClick={handleVerifyHalal}
+            disabled={verifying}
+            className="absolute top-2 right-2 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 transition-colors"
+          >
+            <Shield size={12} />
+            {verifying ? 'Verifying...' : 'Halal Certified'}
+          </button>
+        )}
+        {halalStatus?.isValid && (
+          <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs">
+            Verified ✓
           </div>
         )}
       </div>
@@ -54,10 +90,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <Button
             variant="primary"
             size="sm"
-            onClick={() => onAddToCart?.(product)}
-            className="flex-1"
+            onClick={handleAddToCart}
+            disabled={cartLoading}
+            className="flex-1 flex items-center justify-center gap-1"
           >
-            Add to Cart
+            <ShoppingCart size={14} />
+            {cartLoading ? 'Adding...' : 'Add to Cart'}
           </Button>
         </div>
       </div>

@@ -89,9 +89,9 @@ export default function CartPage() {
                   <div className="flex items-center space-x-4">
                     {/* Product Image */}
                     <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                      {item.product.image ? (
+                      {item.product.images?.[0] ? (
                         <img
-                          src={item.product.image}
+                          src={item.product.images[0]}
                           alt={item.product.name}
                           className="w-full h-full object-cover rounded-lg"
                         />
@@ -112,11 +112,7 @@ export default function CartPage() {
                             <span className="text-sm font-medium">Halal Certified</span>
                           </div>
                         )}
-                        {item.product.halalScore && (
-                          <span className="text-sm text-gray-500">
-                            Score: {item.product.halalScore}%
-                          </span>
-                        )}
+
                       </div>
                       <p className="text-lg font-bold text-gray-900 mt-2">
                         ${(item.product.price * item.quantity).toFixed(2)}

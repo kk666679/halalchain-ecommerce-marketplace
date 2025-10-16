@@ -1,22 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-
-interface CartItem {
-  id: string;
-  product: {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    isHalalCertified: boolean;
-    halalScore?: number;
-  };
-  quantity: number;
-}
-
-interface Cart {
-  items: CartItem[];
-  total: number;
-}
+import { cartApi } from '@/lib/api';
+import { Cart } from '@/types';
 
 export function useCart() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -30,18 +14,8 @@ export function useCart() {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/cart', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const cartData = await response.json();
-        setCart(cartData);
-      } else {
-        setCart({ items: [], total: 0 });
-      }
+      const cartData = await cartApi.getCart() as Cart;
+      setCart(cartData);
     } catch (error) {
       console.error('Failed to fetch cart:', error);
       setCart({ items: [], total: 0 });
@@ -56,19 +30,7 @@ export function useCart() {
       }
 
       setLoading(true);
-      const response = await fetch('http://localhost:3001/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ productId, quantity }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add to cart');
-      }
-
+      await cartApi.addToCart(productId, quantity);
       await fetchCart();
     } catch (error) {
       console.error('Failed to add to cart:', error);
@@ -84,18 +46,8 @@ export function useCart() {
       if (!token) return;
 
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/cart/item/${cartItemId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ quantity }),
-      });
-
-      if (response.ok) {
-        await fetchCart();
-      }
+      await cartApi.updateCartItem(cartItemId, quantity);
+      await fetchCart();
     } catch (error) {
       console.error('Failed to update cart:', error);
       throw error;
@@ -110,16 +62,8 @@ export function useCart() {
       if (!token) return;
 
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/cart/item/${cartItemId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        await fetchCart();
-      }
+      await cartApi.removeFromCart(cartItemId);
+      await fetchCart();
     } catch (error) {
       console.error('Failed to remove from cart:', error);
       throw error;
@@ -136,18 +80,7 @@ export function useCart() {
       }
 
       setLoading(true);
-      const response = await fetch('http://localhost:3001/cart/checkout', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Checkout failed');
-      }
-
-      const order = await response.json();
+      const order = await cartApi.checkout();
       setCart({ items: [], total: 0 });
       return order;
     } catch (error) {

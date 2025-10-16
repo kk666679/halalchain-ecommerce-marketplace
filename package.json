@@ -1,32 +1,40 @@
 {
-  "name": "halalchain-ecommerce-marketplace",
-  "private": true,
-  "license": "MIT",
-  "copyright": "Copyright (c) 2025 HALALCHAIN Frontend",
-  "workspaces": [
-    "apps/*"
-  ],
+  "name": "halalchain-ecommerce",
+  "version": "1.0.0",
+  "description": "Blockchain-powered Halal E-commerce Platform",
   "scripts": {
-    "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
-    "dev": "concurrently \"npm run dev --workspace=apps/frontend\" \"npm run start:dev --workspace=apps/backend\"",
-    "start": "npm run start --workspace=apps/frontend & npm run start:prod --workspace=apps/backend",
-    "lint": "npm run lint --workspace=apps/frontend && npm run lint --workspace=apps/backend",
-    "test": "npm run test --workspace=apps/backend",
-    "db:generate": "npx prisma generate",
-    "db:push": "npx prisma db push",
-    "db:seed": "npx prisma db seed"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.7",
-    "concurrently": "^8.2.2",
-    "eslint": "^9.18.0",
-    "prettier": "^3.4.2",
-    "prisma": "^6.16.2",
-    "typescript": "^5.7.3"
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "build": "npm run backend:build && npm run frontend:build",
+    "start": "npm run backend:start",
+    "backend:dev": "cd apps/backend && npm run start:dev",
+    "backend:build": "cd apps/backend && npm install && npm run build",
+    "backend:start": "cd apps/backend && npm run start:prod",
+    "frontend:dev": "cd apps/frontend && npm run dev",
+    "frontend:build": "cd apps/frontend && npm install && npm run build",
+    "frontend:start": "cd apps/frontend && npm run start",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "setup": "npm install && npm run db:generate && npm run db:push && npm run db:seed",
+    "test": "cd apps/backend && npm test",
+    "test:e2e": "cd apps/backend && npm run test:e2e"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.2",
-    "framer-motion": "^12.23.22",
-    "swr": "^2.3.6"
+    "@prisma/client": "^5.20.0",
+    "ai": "^5.0.72",
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.5.0",
+    "concurrently": "^8.2.2",
+    "next": "^15.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "prisma": "^5.20.0",
+    "tsx": "^4.6.2"
   }
 }

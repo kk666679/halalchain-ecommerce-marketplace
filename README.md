@@ -27,6 +27,7 @@
 * **Shopping Cart** – Add/remove items, manage quantities
 * **Blockchain Verification** – Basic Halal certification tracking via blockchain hashes
 * **AI Site Generator** – Prompt-based site creation and analysis tools
+* **Responsive Navigation** – User profile dropdown, mobile menu, theme toggle, accessibility features
 
 ### 🚧 Planned Features
 
@@ -190,23 +191,28 @@ The application uses Prisma with PostgreSQL. The schema includes all necessary m
 
 ## 🧩 Project Structure
 
-```mermaid
-flowchart TD
-    A[halalchain-ecommerce] --> B[apps]
-    B --> C[frontend NextJS]
-    B --> D[backend NestJS]
-    D --> D1[auth]
-    D --> D2[products]
-    D --> D3[vendors]
-    D --> D4[orders]
-    D --> D5[blockchain]
-    D --> D6[ai]
-    D --> D7[supply-chain]
-    D --> D8[common]
-    D --> D9[prisma schema.prisma]
-    A --> E[magento-integration]
-    A --> F[docker-compose.yml]
-    A --> G[README.md]
+```
+halalchain/
+├── apps/
+│   ├── frontend/        # Next.js app with App Router
+│   │   ├── src/
+│   │   │   ├── app/           # Pages and API routes
+│   │   │   ├── components/    # Reusable UI components
+│   │   │   ├── contexts/      # React contexts (Auth, Cart)
+│   │   │   ├── hooks/         # Custom hooks
+│   │   │   └── lib/           # Utilities and configs
+│   └── backend/         # NestJS app
+│       ├── src/
+│       │   ├── modules/
+│       │   │   ├── auth/      # Authentication & authorization
+│       │   │   ├── products/  # Product management
+│       │   │   ├── cart/      # Shopping cart
+│       │   │   ├── blockchain/# Halal certification verification
+│       │   │   └── ai-tools/  # AI-powered tools
+│       │   └── common/        # Shared services (Prisma)
+├── prisma/              # Database schema and migrations
+├── docs/                # Documentation and analysis reports
+└── README.md
 ```
 
 ---

@@ -1,6 +1,7 @@
 // Prisma schema for HalalChain E-commerce Platform
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -29,73 +30,150 @@ enum HalalStatus {
   REJECTED
 }
 
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum ShipmentStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum AIAgentType {
+  FRAUD_DETECTION
+  SENTIMENT_ANALYSIS
+  HALAL_COMPLIANCE
+  VENDOR_PERFORMANCE
+  SUPPLY_CHAIN_OPTIMIZATION
+  DEMAND_FORECASTING
+  PRICE_OPTIMIZATION
+  INVENTORY_PREDICTION
+  CUSTOMER_INSIGHT
+  MARKET_ANALYSIS
+  QUALITY_ASSURANCE
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      UserRole @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String
+  name        String
+  phone       String?
+  avatar      String?
+  role        UserRole  @default(CUSTOMER)
+  isVerified  Boolean   @default(false)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relations
-  orders    Order[]
-  vendor    Vendor?
-  cartItems CartItem[]
+  orders      Order[]
+  vendor      Vendor?
+  cartItems   CartItem[]
+  addresses   Address[]
+  payments    Payment[]
+  reviews     Review[]
 
   @@map("users")
 }
 
 model Vendor {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  storeName   String
-  description String?
-  rating      Float?   @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  storeName     String
+  description   String?
+  logo          String?
+  rating        Float?    @default(0)
+  totalSales    Float     @default(0)
+  isVerified    Boolean   @default(false)
+  businessLicense String?
+  taxId         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products Product[]
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products      Product[]
+  suppliers     Supplier[]
+  warehouses    Warehouse[]
 
   @@map("vendors")
 }
 
 model Product {
-  id              String      @id @default(cuid())
+  id              String        @id @default(cuid())
   name            String
   description     String?
   price           Float
+  compareAtPrice  Float?
   category        String
+  subcategory     String?
+  sku             String        @unique
+  barcode         String?
+  weight          Float?
+  dimensions      String?
+  images          String[]      @default([])
   vendorId        String
-  halalCertified  Boolean     @default(false)
+  halalCertified  Boolean       @default(false)
   blockchainHash  String?
-  stockQuantity   Int         @default(0)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  stockQuantity   Int           @default(0)
+  minStockLevel   Int           @default(10)
+  maxStockLevel   Int           @default(1000)
+  isActive        Boolean       @default(true)
+  tags            String[]      @default([])
+  rating          Float?        @default(0)
+  reviewCount     Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   // Relations
-  vendor          Vendor      @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendor          Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   orderItems      OrderItem[]
   inventories     Inventory[]
   certifications  Certification[]
   cartItems       CartItem[]
+  reviews         Review[]
+  procurements    Procurement[]
 
   @@map("products")
 }
 
 model Order {
-  id        String      @id @default(cuid())
-  userId    String
-  total     Float
-  status    OrderStatus @default(PENDING)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  userId          String
+  subtotal        Float
+  tax             Float         @default(0)
+  shipping        Float         @default(0)
+  discount        Float         @default(0)
+  total           Float
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  shippingAddress Json
+  billingAddress  Json?
+  notes           String?
+  trackingNumber  String?
+  estimatedDelivery DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   // Relations
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+  payments        Payment[]
+  shipments       Shipment[]
 
   @@map("orders")
 }
@@ -115,15 +193,23 @@ model OrderItem {
 }
 
 model Inventory {
-  id          String @id @default(cuid())
-  productId   String
-  warehouseId String
-  quantity    Int
-  location    String
+  id            String    @id @default(cuid())
+  productId     String
+  warehouseId   String
+  quantity      Int
+  reservedQty   Int       @default(0)
+  availableQty  Int
+  location      String
+  binLocation   String?
+  lastUpdated   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouse     Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
 
+  @@unique([productId, warehouseId])
   @@map("inventories")
 }
 
@@ -135,6 +221,10 @@ model Certification {
   status        HalalStatus @default(PENDING)
   issuedBy      String
   issuedAt      DateTime    @default(now())
+  expiresAt     DateTime?
+  certificateUrl String?
+  auditTrail    Json        @default("[]")
+  smartContract String?
 
   // Relations
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -156,4 +246,259 @@ model CartItem {
 
   @@unique([userId, productId])
   @@map("cart_items")
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  type        String  // 'shipping', 'billing'
+  firstName   String
+  lastName    String
+  company     String?
+  address1    String
+  address2    String?
+  city        String
+  state       String
+  postalCode  String
+  country     String
+  phone       String?
+  isDefault   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("addresses")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  orderId         String?
+  userId          String
+  amount          Float
+  currency        String        @default("USD")
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   String        // 'stripe', 'paypal', 'crypto'
+  transactionId   String?
+  gatewayResponse Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  order           Order?        @relation(fields: [orderId], references: [id])
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  userId    String
+  rating    Int      // 1-5
+  title     String?
+  comment   String?
+  images    String[] @default([])
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId])
+  @@map("reviews")
+}
+
+model Warehouse {
+  id          String      @id @default(cuid())
+  name        String
+  vendorId    String?
+  address     Json
+  capacity    Int?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  vendor      Vendor?     @relation(fields: [vendorId], references: [id])
+  inventories Inventory[]
+  shipments   Shipment[]
+
+  @@map("warehouses")
+}
+
+model Supplier {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  phone         String?
+  address       Json
+  vendorId      String?
+  status        SupplierStatus @default(ACTIVE)
+  rating        Float?         @default(0)
+  paymentTerms  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  vendor        Vendor?        @relation(fields: [vendorId], references: [id])
+  procurements  Procurement[]
+
+  @@map("suppliers")
+}
+
+model Procurement {
+  id            String   @id @default(cuid())
+  productId     String
+  supplierId    String
+  quantity      Int
+  unitPrice     Float
+  totalAmount   Float
+  status        String   @default("PENDING")
+  orderDate     DateTime @default(now())
+  expectedDate  DateTime?
+  receivedDate  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier      Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@map("procurements")
+}
+
+model Shipment {
+  id              String         @id @default(cuid())
+  orderId         String
+  warehouseId     String
+  trackingNumber  String         @unique
+  carrier         String
+  status          ShipmentStatus @default(PENDING)
+  shippingAddress Json
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  warehouse       Warehouse      @relation(fields: [warehouseId], references: [id])
+
+  @@map("shipments")
+}
+
+model AIAgent {
+  id          String      @id @default(cuid())
+  name        String
+  type        AIAgentType
+  description String?
+  config      Json        @default("{}")
+  isActive    Boolean     @default(true)
+  lastRun     DateTime?
+  performance Json        @default("{}")
+  accuracy    Float?      @default(0)
+  priority    Int         @default(1)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  logs        AIAgentLog[]
+  recommendations AIRecommendation[]
+
+  @@map("ai_agents")
+}
+
+model AIAgentLog {
+  id        String   @id @default(cuid())
+  agentId   String
+  action    String
+  input     Json?
+  output    Json?
+  status    String   // 'SUCCESS', 'ERROR', 'RUNNING'
+  duration  Int?     // milliseconds
+  confidence Float?  // AI confidence score
+  metadata  Json?    @default("{}")
+  createdAt DateTime @default(now())
+
+  // Relations
+  agent     AIAgent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("ai_agent_logs")
+}
+
+model AIRecommendation {
+  id          String   @id @default(cuid())
+  agentId     String
+  type        String   // 'PRICE_SUGGESTION', 'INVENTORY_ALERT', 'QUALITY_CHECK', etc.
+  targetId    String   // ID of the entity being recommended for (product, order, etc.)
+  targetType  String   // 'PRODUCT', 'ORDER', 'VENDOR', etc.
+  title       String
+  description String
+  confidence  Float
+  impact      String   // 'HIGH', 'MEDIUM', 'LOW'
+  status      String   @default("PENDING") // 'PENDING', 'APPLIED', 'REJECTED'
+  appliedAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  agent       AIAgent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("ai_recommendations")
+}
+
+model Analytics {
+  id        String   @id @default(cuid())
+  metric    String   // 'sales', 'inventory_turnover', 'customer_satisfaction'
+  value     Float
+  metadata  Json?    @default("{}")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("analytics")
+}
+
+model BlockchainTransaction {
+  id              String   @id @default(cuid())
+  txHash          String   @unique
+  blockNumber     BigInt?
+  blockHash       String?
+  fromAddress     String
+  toAddress       String?
+  value           String?  // Wei for ETH, satoshis for BTC
+  gasUsed         BigInt?
+  gasPrice        BigInt?
+  status          String   @default("PENDING") // 'PENDING', 'CONFIRMED', 'FAILED'
+  network         String   // 'ethereum', 'polygon', 'bsc', etc.
+  contractAddress String?
+  eventName       String?
+  eventData       Json?    @default("{}")
+  entityId        String   // Related entity ID (product, certification, etc.)
+  entityType      String   // 'CERTIFICATION', 'PRODUCT', 'ORDER', etc.
+  confirmedAt     DateTime?
+  createdAt       DateTime @default(now())
+
+  @@map("blockchain_transactions")
+}
+
+model SmartContract {
+  id          String   @id @default(cuid())
+  name        String
+  address     String   @unique
+  network     String   // 'ethereum', 'polygon', 'bsc', etc.
+  abi         Json
+  bytecode    String?
+  deployedAt  DateTime?
+  deployer    String?
+  verified    Boolean  @default(false)
+  sourceCode  String?
+  compiler    String?
+  license     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("smart_contracts")
 }

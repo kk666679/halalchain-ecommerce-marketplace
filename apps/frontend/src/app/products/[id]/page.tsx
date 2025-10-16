@@ -1,90 +1,42 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import React from 'react';
 import Image from 'next/image';
 import { Product } from '@/types';
-import { productsApi } from '@/lib/api';
 import { Button } from '@/components/Button';
 
-export default function ProductDetailsPage() {
-  const { id } = useParams();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [verifying, setVerifying] = useState(false);
-  const [verificationResult, setVerificationResult] = useState<{ isValid: boolean; hash: string } | null>(null);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const data = await productsApi.getById(id as string);
-        setProduct(data);
-      } catch {
-        // Use mock data when backend is not available
-        const mockProduct: Product = {
-          id: id as string,
-          name: 'Halal Chicken Breast',
-          description: 'Fresh, premium halal-certified chicken breast from trusted farms. Our chicken is raised according to strict halal standards and processed in certified facilities.',
-          price: 12.99,
-          category: 'Meat',
-          images: ['/placeholder-product.jpg'],
-          vendorId: 'vendor1',
-          vendorName: 'Halal Meats Co',
-          isHalalCertified: true,
-          blockchainHash: '0x1234567890abcdef',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        setProduct(mockProduct);
-        console.warn('Backend not available, using mock data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchProduct();
-    }
-  }, [id]);
-
-  const handleVerifyHalal = async () => {
-    if (!product) return;
-    
-    try {
-      setVerifying(true);
-      const result = await productsApi.verifyHalal(product.id);
-      setVerificationResult(result);
-    } catch {
-      // Mock verification result when backend is not available
-      setVerificationResult({ isValid: true, hash: '0x1234567890abcdef' });
-      console.warn('Backend not available, using mock verification');
-    } finally {
-      setVerifying(false);
-    }
+interface ProductDetailsPageProps {
+  params: {
+    id: string;
   };
+}
 
-  const handleAddToCart = () => {
-    if (product) {
-      alert(`Added ${product.name} to cart`);
-    }
+export async function generateStaticParams() {
+  // Generate static params for known products
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+    { id: '4' },
+    { id: '5' },
+  ];
+}
+
+export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
+  const { id } = params;
+  // Mock product data for static generation
+  const product: Product = {
+    id,
+    name: 'Halal Chicken Breast',
+    description: 'Fresh, premium halal-certified chicken breast from trusted farms. Our chicken is raised according to strict halal standards and processed in certified facilities.',
+    price: 12.99,
+    category: 'Meat',
+    images: ['/placeholder-product.jpg'],
+    vendorId: 'vendor1',
+    vendorName: 'Halal Meats Co',
+    isHalalCertified: true,
+    blockchainHash: '0x1234567890abcdef',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading product...</div>
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">Product not found</div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -129,19 +81,9 @@ export default function ProductDetailsPage() {
                     Blockchain Hash: <code className="bg-gray-200 px-1 rounded">{product.blockchainHash}</code>
                   </p>
                 )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleVerifyHalal}
-                  disabled={verifying}
-                >
-                  {verifying ? 'Verifying...' : 'Verify on Blockchain'}
+                <Button variant="outline" size="sm">
+                  Verify on Blockchain
                 </Button>
-                {verificationResult && (
-                  <div className={`mt-2 p-2 rounded ${verificationResult.isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {verificationResult.isValid ? '✓ Verification successful' : '✗ Verification failed'}
-                  </div>
-                )}
               </div>
             ) : (
               <p className="text-yellow-600">⚠ This product is not Halal certified</p>
@@ -150,20 +92,10 @@ export default function ProductDetailsPage() {
 
           {/* Actions */}
           <div className="space-y-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleAddToCart}
-              className="w-full"
-            >
+            <Button variant="primary" size="lg" className="w-full">
               Add to Cart
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => window.history.back()}
-              className="w-full"
-            >
+            <Button variant="outline" size="lg" className="w-full">
               Back to Products
             </Button>
           </div>

@@ -124,11 +124,15 @@ let CartService = class CartService {
                 throw new common_1.BadRequestException(`Insufficient stock for ${item.product.name}`);
             }
         }
+        const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
         const order = await this.prisma.order.create({
             data: {
+                orderNumber: `ORD-${Date.now()}`,
                 userId,
-                total: cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
+                subtotal: total,
+                total,
                 status: 'PENDING',
+                shippingAddress: {},
             },
         });
         for (const item of cartItems) {

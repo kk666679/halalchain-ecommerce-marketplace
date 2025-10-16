@@ -140,12 +140,17 @@ export class CartService {
       }
     }
 
+    const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    
     // Create order
     const order = await this.prisma.order.create({
       data: {
+        orderNumber: `ORD-${Date.now()}`,
         userId,
-        total: cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
+        subtotal: total,
+        total,
         status: 'PENDING',
+        shippingAddress: {},
       },
     });
 

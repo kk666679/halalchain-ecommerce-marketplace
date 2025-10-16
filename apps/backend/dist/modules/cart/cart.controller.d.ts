@@ -5,58 +5,16 @@ export declare class CartController {
     addToCart(req: any, addToCartDto: {
         productId: string;
         quantity: number;
-    }): Promise<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        productId: string;
-        quantity: number;
-    }>;
+    }): Promise<any>;
     getCart(req: any): Promise<{
-        items: ({
-            product: {
-                id: string;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                description: string | null;
-                price: number;
-                category: string;
-                vendorId: string;
-                halalCertified: boolean;
-                blockchainHash: string | null;
-                stockQuantity: number;
-            };
-        } & {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            userId: string;
-            productId: string;
-            quantity: number;
-        })[];
-        total: number;
+        items: any;
+        total: any;
     }>;
     updateCartItem(req: any, cartItemId: string, updateCartDto: {
         quantity: number;
-    }): Promise<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        productId: string;
-        quantity: number;
-    } | null>;
+    }): Promise<any>;
     removeFromCart(req: any, cartItemId: string): Promise<{
         message: string;
     }>;
-    checkout(req: any): Promise<{
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        userId: string;
-        total: number;
-        status: import("@prisma/client").$Enums.OrderStatus;
-    }>;
+    checkout(req: any): Promise<any>;
 }

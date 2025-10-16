@@ -1,7 +1,5 @@
-'use client';
-
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/Button';
 
 interface IntegrationDetailProps {
@@ -29,38 +27,32 @@ const integrationDetailsMap: Record<string, { name: string; description: string 
   },
 };
 
+export async function generateStaticParams() {
+  return [
+    { id: 'sap' },
+    { id: 'alibaba' },
+    { id: 'adobe' },
+    { id: 'oracle' },
+  ];
+}
+
 export default function IntegrationDetailPage({ params }: IntegrationDetailProps) {
   const { id } = params;
-  const router = useRouter();
-
   const integration = integrationDetailsMap[id];
-
-  const [connected, setConnected] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
   if (!integration) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-destructive">Integration not found</h1>
         <p className="mt-2 text-muted-foreground">The requested integration does not exist.</p>
-        <Button variant="outline" size="sm" onClick={() => router.push('/integrations')}>
-          Back to Integrations
-        </Button>
+        <Link href="/integrations">
+          <Button variant="outline" size="sm">
+            Back to Integrations
+          </Button>
+        </Link>
       </div>
     );
   }
-
-  const handleConnect = () => {
-    setSyncing(true);
-    setTimeout(() => {
-      setConnected(true);
-      setSyncing(false);
-    }, 2000);
-  };
-
-  const handleDisconnect = () => {
-    setConnected(false);
-  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -69,25 +61,16 @@ export default function IntegrationDetailPage({ params }: IntegrationDetailProps
 
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-foreground mb-2">Connection Status</h2>
-        <p className={`inline-block px-3 py-1 rounded-full text-primary-foreground font-semibold ${
-          connected ? 'bg-primary' : 'bg-muted'
-        }`}>
-          {connected ? 'Connected' : 'Disconnected'}
+        <p className="inline-block px-3 py-1 rounded-full text-primary-foreground font-semibold bg-muted">
+          Disconnected
         </p>
       </div>
 
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-foreground mb-2">Actions</h2>
-        {!connected && (
-          <Button variant="primary" size="md" onClick={handleConnect} disabled={syncing}>
-            {syncing ? 'Connecting...' : 'Connect'}
-          </Button>
-        )}
-        {connected && (
-          <Button variant="outline" size="md" onClick={handleDisconnect}>
-            Disconnect
-          </Button>
-        )}
+        <Button variant="primary" size="md">
+          Connect
+        </Button>
       </div>
 
       <div className="mb-6">
@@ -95,9 +78,11 @@ export default function IntegrationDetailPage({ params }: IntegrationDetailProps
         <p className="text-muted-foreground">Configuration options will be available here once connected.</p>
       </div>
 
-      <Button variant="outline" size="sm" onClick={() => router.push('/integrations')}>
-        Back to Integrations
-      </Button>
+      <Link href="/integrations">
+        <Button variant="outline" size="sm">
+          Back to Integrations
+        </Button>
+      </Link>
     </div>
   );
 }
