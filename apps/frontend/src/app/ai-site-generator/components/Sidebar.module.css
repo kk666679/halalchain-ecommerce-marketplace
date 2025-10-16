@@ -1,0 +1,222 @@
+.sidebar {
+  width: 280px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-neon);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.logo i {
+  color: var(--accent-neon);
+}
+
+.navSection h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-secondary);
+}
+
+.navItem:hover {
+  background: rgba(0, 245, 255, 0.1);
+  color: var(--primary-neon);
+  transform: translateX(4px);
+}
+
+.navItem.active {
+  background: rgba(0, 245, 255, 0.15);
+  color: var(--primary-neon);
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+}
+
+.navItem i {
+  font-size: 1.125rem;
+  width: 20px;
+  text-align: center;
+}
+
+.navItem span {
+  font-weight: 500;
+}
+
+.themeSection {
+  margin-top: auto;
+  padding: var(--spacing-lg) 0;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--glass-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+    padding: 1rem;
+  }
+
+  .logo {
+    margin-bottom: 1.5rem;
+  }
+
+  .navItem {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .themeSection {
+    border-top: none;
+    border-bottom: 1px solid var(--glass-border);
+    margin-top: var(--spacing-lg);
+  }
+}
+
+/* Collapsible functionality */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.collapseBtn {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-md);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.collapseBtn:hover {
+  background: rgba(0, 245, 255, 0.1);
+  color: var(--primary-neon);
+  border-color: var(--primary-neon);
+}
+
+.collapsedItem {
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.collapsedItem span {
+  display: none;
+}
+
+.navSection h3 {
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.sidebar.collapsed .navSection h3 {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  margin-bottom: var(--spacing-lg);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sectionHeader:hover {
+  background: rgba(0, 245, 255, 0.1);
+  color: var(--primary-neon);
+}
+
+.sectionHeader h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.sectionHeader i {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+  margin-left: var(--spacing-md);
+}
+
+.sidebar.collapsed .sectionHeader {
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.sidebar.collapsed .sectionHeader h3 {
+  display: none;
+}
+
+.sidebar.collapsed .sectionHeader i {
+  margin-left: 0;
+}
+
+/* Expanded content styles */
+.expandedContent {
+  overflow: hidden;
+  margin-top: var(--spacing-xs);
+}
+
+.expandedContent > div {
+  padding-left: var(--spacing-lg);
+  transition: padding-left 0.3s ease;
+}
+
+.sidebar.collapsed .expandedContent > div {
+  padding-left: var(--spacing-md);
+}
