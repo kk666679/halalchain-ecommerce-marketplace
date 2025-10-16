@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { Button } from '@/components/Button';
 
 interface IntegrationDetailProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const integrationDetailsMap: Record<string, { name: string; description: string }> = {
@@ -36,8 +36,8 @@ export async function generateStaticParams() {
   ];
 }
 
-export default function IntegrationDetailPage({ params }: IntegrationDetailProps) {
-  const { id } = params;
+export default async function IntegrationDetailPage({ params }: IntegrationDetailProps) {
+  const { id } = await params;
   const integration = integrationDetailsMap[id];
 
   if (!integration) {

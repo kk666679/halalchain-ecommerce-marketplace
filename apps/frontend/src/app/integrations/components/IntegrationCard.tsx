@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/Button';
 import { ExternalLink, Clock, Plus } from 'lucide-react';
 import { MotionCard } from '@/components/motion/MotionComponents';
-import { cardVariants, springPresets } from '@/lib/animations';
+import { springPresets } from '@/lib/animations';
 
 interface Integration {
   id: string;
@@ -25,6 +25,8 @@ interface IntegrationCardProps {
   onConnect: (id: string) => void;
   onDisconnect: (id: string) => void;
 }
+
+
 
 export default function IntegrationCard({ integration, onConnect, onDisconnect }: IntegrationCardProps) {
   const getStatusColor = (status: string) => {

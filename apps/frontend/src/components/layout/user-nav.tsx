@@ -12,11 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DashboardRole } from '@/types';
+import { MarketplaceRole } from '@/types';
 
 interface UserNavProps {
   userName: string;
-  role: DashboardRole;
+  role: MarketplaceRole;
 }
 
 export function UserNav({ userName, role }: UserNavProps) {

@@ -4,10 +4,10 @@ import { Bell, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserNav } from './user-nav';
-import { DashboardRole } from '@/types';
+import { MarketplaceRole } from '@/types';
 
 interface HeaderProps {
-  role: DashboardRole;
+  role: MarketplaceRole;
   userName: string;
 }
 

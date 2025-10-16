@@ -1,3 +1,5 @@
+ 
+
 'use client';
 
 /**
@@ -14,6 +16,7 @@ import CartIcon from './CartIcon';
 import { ThemeToggle } from './theme-toggle';
 import { Menu, X, User, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types';
 
 export const Header = React.memo(function Header() {
   // State for mobile menu toggle
@@ -74,9 +77,14 @@ export const Header = React.memo(function Header() {
           <Link href="/halal-certification" className="text-foreground hover:text-primary transition-colors">
             Halal Certification
           </Link>
-          <Link href="/dashboard" className="text-foreground hover:text-primary transition-colors">
-            Dashboard
+          <Link href="/marketplace" className="text-foreground hover:text-primary transition-colors">
+            Marketplace
           </Link>
+          {user && user.role === UserRole.VENDOR && (
+            <Link href="/vendor/marketplace" className="text-foreground hover:text-primary transition-colors">
+              Vendor Marketplace
+            </Link>
+          )}
           <Link href="/ai-site-generator" className="text-foreground hover:text-primary transition-colors">
             AI Site Generator
           </Link>
@@ -173,91 +181,85 @@ export const Header = React.memo(function Header() {
         <nav className="md:hidden bg-background border-t border-border shadow-inner" role="navigation" aria-label="Mobile navigation">
           <ul className="flex flex-col space-y-2 p-4">
             <li>
-          
-            <li>
               <Link href="/products" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Products
               </Link>
-          
-          
+            </li>
             <li>
               <Link href="/integrations" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Integrations
               </Link>
-          
-          
+            </li>
             <li>
               <Link href="/halal-certification" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Halal Certification
               </Link>
-          
-          
+            </li>
             <li>
-              <Link href="/dashboard" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                Dashboard
+              <Link href="/marketplace" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                Marketplace
               </Link>
-          
-          
+            </li>
+            {user && user.role === UserRole.VENDOR && (
+              <li>
+                <Link href="/vendor/marketplace" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Vendor Marketplace
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/ai-site-generator" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 AI Site Generator
               </Link>
-          
-          
+            </li>
             <li>
               <Link href="/ai-chat" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 AI Chat
               </Link>
-          
+            </li>
             <li>
               <Link href="/investor" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                 Investor
               </Link>
-          
+            </li>
             {user ? (
               <>
-              
-            <li>
+                <li>
                   <Link href="/profile" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     Profile
                   </Link>
-              
-              
-            <li>
+                </li>
+                <li>
                   <Link href="/orders" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     Orders
                   </Link>
-              
-              
-            <li>
+                </li>
+                <li>
                   <Link href="/settings" className="block text-foreground hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
                     Settings
                   </Link>
-              
-              
-            <li>
+                </li>
+                <li>
                   <button
                     onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                     className="block w-full text-left text-foreground hover:text-primary transition-colors"
                   >
                     Logout
                   </button>
-              
+                </li>
               </>
             ) : (
               <>
-              
-            <li>
+                <li>
                   <Button variant="outline" size="sm" onClick={() => { setMobileMenuOpen(false); router.push('/auth/login'); }}>
                     Login
                   </Button>
-              
-              
-            <li>
+                </li>
+                <li>
                   <Button variant="primary" size="sm" onClick={() => { setMobileMenuOpen(false); router.push('/auth/register'); }}>
                     Register
                   </Button>
-              
+                </li>
               </>
             )}
           </ul>

@@ -9,7 +9,7 @@ export declare class AiToolsService {
     private handleToolCall;
     chat(messages: Array<{
         role: string;
-        content: string;
+        content: string | any[];
     }>): Promise<any>;
     generateSite(prompt: string): Promise<any>;
     private parseSite;

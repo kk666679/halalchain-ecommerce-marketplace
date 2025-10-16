@@ -5,8 +5,10 @@ import { AiToolsService } from './ai-tools.service';
 export class AiToolsController {
   constructor(private readonly aiToolsService: AiToolsService) {}
 
-    @Post('chat')
-  async chat(@Body() body: { messages: Array<{ role: string; content: string }> }) {
+  @Post('chat')
+  async chat(
+    @Body() body: { messages: Array<{ role: string; content: string }> },
+  ) {
     return this.aiToolsService.chat(body.messages);
   }
 

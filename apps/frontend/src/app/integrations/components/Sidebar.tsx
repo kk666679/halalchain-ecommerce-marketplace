@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Store, Smartphone, Building2, CreditCard, BarChart3, Bot, Truck, Users, Shield } from 'lucide-react';
+import { ChevronRight, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { springPresets, staggerVariants } from '@/lib/animations';
+import { springPresets } from '@/lib/animations';
 
 interface Category {
   id: string;

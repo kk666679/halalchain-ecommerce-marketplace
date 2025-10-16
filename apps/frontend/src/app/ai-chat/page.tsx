@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Loader2 } from 'lucide-react';
 
@@ -16,56 +16,44 @@ export default function AIChatPage() {
     {
       id: '1',
       role: 'assistant',
-      content: 'Assalamu Alaikum! I\'m your HalalChain AI assistant. I can help you with:\n\n• Halal product recommendations\n• Islamic finance guidance\n• Halal certification information\n• E-commerce best practices\n• Supply chain compliance\n\nHow can I assist you today?',
+      content: "Assalamu Alaikum! I'm your HalalChain AI assistant.",
       timestamp: new Date(),
     },
   ]);
-  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const input = (formData.get('message') as string)?.trim();
+    if (!input || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: input,
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    setMessages((prev) => [...prev, userMessage]);
+    e.currentTarget.reset();
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [...messages, userMessage].map(msg => ({
-            role: msg.role,
-            content: msg.content,
-          })),
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })) }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
+      if (!res.ok) throw new Error('Network error');
 
-      const data = await response.json();
-
+      const data = await res.json();
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -73,129 +61,87 @@ export default function AIChatPage() {
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I apologize, but I encountered an error. Please try again.',
+        content: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen flex-col bg-background">
       {/* Header */}
-      <div className="w-full border-b bg-card px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-            <Bot className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">HalalChain AI Assistant</h1>
-            <p className="text-sm text-muted-foreground">
-              Your intelligent guide to Halal e-commerce and Islamic finance
-            </p>
-          </div>
+      <header className="border-b bg-card px-6 py-4 flex items-center gap-3">
+        <Bot className="h-6 w-6 text-primary" />
+        <div>
+          <h1 className="text-xl font-semibold">HalalChain AI</h1>
+          <p className="text-sm text-muted-foreground">Your guide to Halal e-commerce and Islamic ethics</p>
         </div>
-      </div>
+      </header>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
-        <div className="mx-auto max-w-4xl space-y-4">
-          <AnimatePresence>
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className={`flex gap-3 ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                {message.role === 'assistant' && (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <Bot className="h-4 w-4 text-primary" />
-                  </div>
-                )}
-                <div
-                  className={`max-w-[70%] rounded-lg px-4 py-3 ${
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap text-sm">{message.content}</p>
-                  <p className="mt-2 text-xs opacity-70">
-                    {message.timestamp.toLocaleTimeString()}
-                  </p>
-                </div>
-                {message.role === 'user' && (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-                    <User className="h-4 w-4 text-primary-foreground" />
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {isLoading && (
+      {/* Messages */}
+      <main className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <AnimatePresence>
+          {messages.map((msg) => (
             <motion.div
+              key={msg.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex gap-3 justify-start"
+              exit={{ opacity: 0, y: 20 }}
+              className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                <Bot className="h-4 w-4 text-primary" />
+              {msg.role === 'assistant' && <Bot className="h-5 w-5 text-primary mt-1" />}
+              <div
+                className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap shadow-sm ${
+                  msg.role === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-foreground'
+                }`}
+              >
+                {msg.content}
+                <p className="mt-1 text-[10px] opacity-60 text-right">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
               </div>
-              <div className="bg-muted rounded-lg px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Thinking...</span>
-                </div>
-              </div>
+              {msg.role === 'user' && <User className="h-5 w-5 text-primary mt-1" />}
             </motion.div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
+          ))}
+        </AnimatePresence>
 
-      {/* Input Area */}
-      <div className="border-t bg-card px-6 py-4">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex gap-3">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask me about Halal products, Islamic finance, or e-commerce..."
-              className="flex-1 resize-none rounded-lg border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
-              rows={1}
-              disabled={isLoading}
-            />
-            <button
-              onClick={handleSendMessage}
-              disabled={!input.trim() || isLoading}
-              className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Send className="h-5 w-5" />
-            </button>
+        {isLoading && (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>HalalChain AI is thinking...</span>
           </div>
-        </div>
-      </div>
+        )}
+        <div ref={messagesEndRef} />
+      </main>
+
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="border-t bg-card px-6 py-4 flex gap-3">
+        <textarea
+          name="message"
+          placeholder="Ask me about Halal products, Islamic finance, or Sharia compliance..."
+          className="flex-1 resize-none rounded-xl border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          rows={1}
+          disabled={isLoading}
+        />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="h-12 w-12 flex items-center justify-center rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition"
+        >
+          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+        </button>
+      </form>
     </div>
   );
 }

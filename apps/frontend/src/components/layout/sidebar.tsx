@@ -16,10 +16,10 @@ import {
   Settings,
 } from 'lucide-react';
 import { getAccessibleModules } from '@/lib/rbac';
-import { DashboardRole } from '@/types';
+import { MarketplaceRole } from '@/types';
 
 interface SidebarProps {
-  role: DashboardRole;
+  role: MarketplaceRole;
   collapsed: boolean;
   onToggle: () => void;
 }
@@ -31,9 +31,9 @@ const moduleIcons = {
 };
 
 const moduleRoutes = {
-  SEO: '/dashboard/seo',
-  CMS: '/dashboard/cms',
-  CRM: '/dashboard/crm',
+  SEO: '/marketplace/seo',
+  CMS: '/marketplace/cms',
+  CRM: '/marketplace/crm',
 };
 
 export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
@@ -52,7 +52,7 @@ export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <div className="flex items-center space-x-2">
             <BarChart3 className="h-6 w-6" />
-            <span className="font-semibold">Dashboard</span>
+            <span className="font-semibold">Marketplace</span>
           </div>
         )}
         <Button
@@ -100,9 +100,9 @@ export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
 
         {/* Settings - Admin only */}
         {role === 'Admin' && (
-          <Link href="/dashboard/settings">
+          <Link href="/marketplace/settings">
             <Button
-              variant={pathname === '/dashboard/settings' ? 'secondary' : 'ghost'}
+              variant={pathname === '/marketplace/settings' ? 'secondary' : 'ghost'}
               className={cn(
                 'w-full justify-start',
                 collapsed ? 'px-2' : 'px-3'

@@ -1,9 +1,4 @@
 {
   "buildCommand": "npm run frontend:build",
-  "outputDirectory": "apps/frontend/.next",
-  "functions": {
-    "apps/frontend/src/app/api/chat/route.ts": {
-      "maxDuration": 30
-    }
-  }
+  "outputDirectory": "apps/frontend/.next"
 }

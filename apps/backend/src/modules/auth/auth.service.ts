@@ -15,7 +15,7 @@ export class AuthService {
       where: { email },
     });
 
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password: _, ...result } = user;
       return result;
     }
@@ -23,18 +23,22 @@ export class AuthService {
   }
 
   async login(user: any): Promise<{ access_token: string }> {
-    const payload = { 
-      email: user.email, 
-      sub: user.id, 
-      role: user.role 
+    const payload = {
+      email: user.email,
+      sub: user.id,
+      role: user.role,
     };
-    
+
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(userData: { email: string; password: string; name: string }): Promise<any> {
+  async register(userData: {
+    email: string;
+    password: string;
+    name: string;
+  }): Promise<any> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     const user = await this.prisma.user.create({

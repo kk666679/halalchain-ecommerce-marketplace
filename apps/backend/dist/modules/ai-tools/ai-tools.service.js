@@ -151,7 +151,7 @@ Always provide helpful, accurate information while respecting Islamic principles
                 role: 'assistant',
                 content: systemPrompt,
             },
-            ...messages.map(msg => ({
+            ...messages.map((msg) => ({
                 role: msg.role === 'user' ? 'user' : 'assistant',
                 content: msg.content,
             })),
@@ -318,7 +318,9 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
             const imgMatches = html.match(/<img[^>]*>/gi) || [];
             return {
                 title: titleMatch ? titleMatch[1] : 'No title found',
-                meta_description: metaDescMatch ? metaDescMatch[1] : 'No meta description found',
+                meta_description: metaDescMatch
+                    ? metaDescMatch[1]
+                    : 'No meta description found',
                 h1_count: h1Matches.length,
                 image_count: imgMatches.length,
                 has_title: !!titleMatch,

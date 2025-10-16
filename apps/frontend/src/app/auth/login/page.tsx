@@ -31,7 +31,7 @@ export default function LoginPage() {
       const response = await authApi.login(formData);
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
-      router.push('/dashboard');
+      router.push('/marketplace');
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
       setError(errorMessage);

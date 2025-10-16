@@ -1,10 +1,8 @@
-# Sync Backend and Frontend Types
+# TODO: Fix Next.js Build Error
 
-## Tasks
-- [ ] Update `apps/frontend/src/types/index.ts` to align with Prisma schema
-  - [ ] Add all missing enums (UserRole, OrderStatus, HalalStatus, etc.)
-  - [ ] Update existing models (User, Product) to match backend fields
-  - [ ] Add all missing models (Vendor, Order, OrderItem, Inventory, Certification, etc.)
-  - [ ] Ensure type consistency between backend and frontend
-- [ ] Verify TypeScript compilation after changes
-- [ ] Test frontend components for type errors
+- [x] Update ProductDetailsPageProps interface in apps/frontend/src/app/products/[id]/page.tsx to make params a Promise
+- [x] Make ProductDetailsPage component async and await params
+- [x] Run npm run build to verify the fix
+- [x] Fix AI SDK type error in chat route
+- [x] Update AI packages if needed
+- [x] Run build again to confirm all errors resolved

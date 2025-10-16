@@ -4,13 +4,14 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api';
 import { Button } from '@/components/Button';
+import { UserRole } from '@/types';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'buyer' as 'buyer' | 'vendor',
+    role: UserRole.CUSTOMER,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +20,7 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.name === 'role' ? (e.target.value as UserRole) : e.target.value,
     });
   };
 
@@ -32,7 +33,7 @@ export default function RegisterPage() {
       const response = await authApi.register(formData);
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
-      router.push('/dashboard');
+      router.push('/marketplace');
     } catch (err: unknown) {
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed';
       setError(errorMessage);
@@ -119,8 +120,8 @@ export default function RegisterPage() {
                 value={formData.role}
                 onChange={handleChange}
               >
-                <option value="buyer">Buyer</option>
-                <option value="vendor">Vendor</option>
+                <option value={UserRole.CUSTOMER}>Customer</option>
+                <option value={UserRole.VENDOR}>Vendor</option>
               </select>
             </div>
           </div>

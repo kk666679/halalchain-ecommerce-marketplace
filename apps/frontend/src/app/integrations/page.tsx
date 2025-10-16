@@ -3,11 +3,10 @@
 import React, { useState } from 'react';
 import { Search, ChevronDown, ChevronRight, Store, Smartphone, Building2, CreditCard, BarChart3, Bot, Truck, Users, Shield, Plus, Cloud, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/Button';
 import IntegrationCard from './components/IntegrationCard';
 import Sidebar from './components/Sidebar';
 import { StaggerContainer, StaggerItem, ScrollProgress, MotionBox } from '@/components/motion/MotionComponents';
-import { fadeVariants, staggerVariants, springPresets } from '@/lib/animations';
+import { fadeVariants, springPresets } from '@/lib/animations';
 
 interface Integration {
   id: string;
@@ -594,7 +593,7 @@ export default function IntegrationsPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             staggerDelay={0.1}
           >
-            {filteredIntegrations.map((integration, index) => (
+            {filteredIntegrations.map((integration, _) => (
               <StaggerItem key={integration.id}>
                 <IntegrationCard
                   integration={integration}

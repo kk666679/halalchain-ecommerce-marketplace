@@ -3,6 +3,11 @@ import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 
+interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 const HALALCHAIN_SYSTEM_PROMPT = `You are HalalChain AI, an expert assistant specializing in Halal e-commerce, Islamic finance, and Shariah-compliant business practices. Your knowledge encompasses:
 
 CORE EXPERTISE:
@@ -46,10 +51,10 @@ Remember: Your role is to guide users toward Shariah-compliant business practice
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages } = await request.json();
+    const { messages }: { messages: ChatMessage[] } = await request.json();
 
     // Add system prompt to the beginning if not already present
-    const systemMessage = {
+    const systemMessage: ChatMessage = {
       role: 'system',
       content: HALALCHAIN_SYSTEM_PROMPT,
     };

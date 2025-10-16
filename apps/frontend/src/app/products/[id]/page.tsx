@@ -1,12 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
-import { Product } from '@/types';
+import { Product, UserRole } from '@/types';
 import { Button } from '@/components/Button';
 
 interface ProductDetailsPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -20,8 +20,8 @@ export async function generateStaticParams() {
   ];
 }
 
-export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
-  const { id } = params;
+export default async function ProductDetailsPage({ params }: ProductDetailsPageProps) {
+  const { id } = await params;
   // Mock product data for static generation
   const product: Product = {
     id,
@@ -31,11 +31,45 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
     category: 'Meat',
     images: ['/placeholder-product.jpg'],
     vendorId: 'vendor1',
-    vendorName: 'Halal Meats Co',
+    sku: 'HALAL-CHICKEN-001',
     isHalalCertified: true,
     blockchainHash: '0x1234567890abcdef',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    stockQuantity: 100,
+    minStockLevel: 10,
+    maxStockLevel: 200,
+    isActive: true,
+    tags: [],
+    reviewCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    vendor: {
+      id: 'vendor1',
+      userId: 'user1',
+      storeName: 'Halal Meats Co',
+      totalSales: 0,
+      isVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: {
+        id: 'user1',
+        email: 'vendor@example.com',
+        password: '',
+        name: 'Vendor User',
+        role: UserRole.VENDOR,
+        isVerified: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      products: [],
+      suppliers: [],
+      warehouses: []
+    },
+    orderItems: [],
+    inventories: [],
+    certifications: [],
+    cartItems: [],
+    reviews: [],
+    procurements: []
   };
 
   return (
@@ -66,7 +100,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             <p className="text-gray-600 mb-4">{product.description}</p>
             <div className="flex items-center justify-between mb-4">
               <span className="text-3xl font-bold text-green-600">${product.price.toFixed(2)}</span>
-              <span className="text-gray-500">By {product.vendorName}</span>
+              <span className="text-gray-500">By {product.vendor.storeName}</span>
             </div>
           </div>
 

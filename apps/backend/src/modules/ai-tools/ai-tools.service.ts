@@ -26,7 +26,8 @@ export class AiToolsService {
   private tools: any[] = [
     {
       name: 'query_database',
-      description: 'Run a safe parameterized SQL query on the database. Returns JSON results.',
+      description:
+        'Run a safe parameterized SQL query on the database. Returns JSON results.',
       input_schema: {
         type: 'object' as const,
         properties: {
@@ -110,7 +111,12 @@ export class AiToolsService {
       case 'query_database':
         return await this.queryDatabase(args.query, args.params || []);
       case 'api_request':
-        return await this.apiRequest(args.url, args.method, args.headers, args.body);
+        return await this.apiRequest(
+          args.url,
+          args.method,
+          args.headers,
+          args.body,
+        );
       case 'translate':
         return await this.translate(args.text, args.target_lang);
       case 'seo_analyzer':
@@ -120,12 +126,15 @@ export class AiToolsService {
     }
   }
 
-  async chat(messages: Array<{ role: string; content: string }>): Promise<any> {
+  async chat(
+    messages: Array<{ role: string; content: string | any[] }>,
+  ): Promise<any> {
     if (!this.anthropic) {
       // Return mock response if no API key
       return {
         role: 'assistant',
-        content: "I'm sorry, but the AI service is currently unavailable. Please try again later.",
+        content:
+          "I'm sorry, but the AI service is currently unavailable. Please try again later.",
       };
     }
 
@@ -145,7 +154,7 @@ Always provide helpful, accurate information while respecting Islamic principles
         role: 'assistant',
         content: systemPrompt,
       },
-      ...messages.map(msg => ({
+      ...messages.map((msg) => ({
         role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.content,
       })),
@@ -160,7 +169,9 @@ Always provide helpful, accurate information while respecting Islamic principles
 
     // Handle tool calls
     if (response.stop_reason === 'tool_use') {
-      const toolCalls = response.content.filter((c: any) => c.type === 'tool_use');
+      const toolCalls = response.content.filter(
+        (c: any) => c.type === 'tool_use',
+      );
       for (const toolCall of toolCalls) {
         const result = await this.handleToolCall(toolCall.name, toolCall.input);
         anthropicMessages.push({
@@ -189,13 +200,13 @@ Always provide helpful, accurate information while respecting Islamic principles
 
       return {
         role: 'assistant',
-        content: (finalResponse.content[0] as any).text,
+        content: finalResponse.content[0].text,
       };
     }
 
     return {
       role: 'assistant',
-      content: (response.content[0] as any).text,
+      content: response.content[0].text,
     };
   }
 
@@ -234,7 +245,9 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
 
     // Handle tool calls
     if (response.stop_reason === 'tool_use') {
-      const toolCalls = response.content.filter((c: any) => c.type === 'tool_use');
+      const toolCalls = response.content.filter(
+        (c: any) => c.type === 'tool_use',
+      );
       for (const toolCall of toolCalls) {
         const result = await this.handleToolCall(toolCall.name, toolCall.input);
         messages.push({
@@ -261,10 +274,10 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
         tools: this.tools,
       });
 
-      return this.parseSite((finalResponse.content[0] as any).text);
+      return this.parseSite(finalResponse.content[0].text);
     }
 
-    return this.parseSite((response.content[0] as any).text);
+    return this.parseSite(response.content[0].text);
   }
 
   private parseSite(content: string): any {
@@ -290,11 +303,16 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
       const result = await this.prisma.$queryRaw(query, ...params);
       return { result, rowCount: Array.isArray(result) ? result.length : 0 };
     } catch (error) {
-      return { error: (error as any).message };
+      return { error: error.message };
     }
   }
 
-  private async apiRequest(url: string, method: string, headers: any, body: string) {
+  private async apiRequest(
+    url: string,
+    method: string,
+    headers: any,
+    body: string,
+  ) {
     try {
       const config = {
         method,
@@ -305,7 +323,7 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
       const response = await firstValueFrom(this.httpService.request(config));
       return { status: response.status, data: response.data };
     } catch (error) {
-      return { error: (error as any).response?.data || (error as any).message };
+      return { error: error.response?.data || error.message };
     }
   }
 
@@ -313,11 +331,13 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
     try {
       // Use LibreTranslate API (free)
       const url = 'https://libretranslate.com/translate';
-      const response = await firstValueFrom(this.httpService.post(url, {
-        q: text,
-        source: 'auto',
-        target: targetLang,
-      }));
+      const response = await firstValueFrom(
+        this.httpService.post(url, {
+          q: text,
+          source: 'auto',
+          target: targetLang,
+        }),
+      );
       return { translated_text: response.data.translatedText };
     } catch (error) {
       return { error: 'Translation failed' };
@@ -330,13 +350,17 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
       const response = await firstValueFrom(this.httpService.get(url));
       const html = response.data;
       const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-      const metaDescMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i);
+      const metaDescMatch = html.match(
+        /<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i,
+      );
       const h1Matches = html.match(/<h1[^>]*>([^<]+)<\/h1>/gi) || [];
       const imgMatches = html.match(/<img[^>]*>/gi) || [];
 
       return {
         title: titleMatch ? titleMatch[1] : 'No title found',
-        meta_description: metaDescMatch ? metaDescMatch[1] : 'No meta description found',
+        meta_description: metaDescMatch
+          ? metaDescMatch[1]
+          : 'No meta description found',
         h1_count: h1Matches.length,
         image_count: imgMatches.length,
         has_title: !!titleMatch,

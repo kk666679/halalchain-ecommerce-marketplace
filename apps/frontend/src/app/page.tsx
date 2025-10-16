@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/Button';
 import { Shield, ShoppingBag, Users, Zap, ArrowRight, User } from 'lucide-react';
-import { MotionBox, Parallax, ScrollProgress } from '@/components/motion/MotionComponents';
-import { fadeVariants, slideVariants, staggerVariants } from '@/lib/animations';
+import { MotionBox, ScrollProgress } from '@/components/motion/MotionComponents';
+
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,7 +18,7 @@ export default function HomePage() {
 
   const handleAuthAction = () => {
     if (user) {
-      router.push('/dashboard');
+      router.push('/marketplace');
     } else {
       router.push('/auth/login');
     }
@@ -38,7 +38,7 @@ export default function HomePage() {
             Secure & Personalized Navigation
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Our intuitive navigation provides seamless access to your dashboard, orders, and settings.
+            Our intuitive navigation provides seamless access to your marketplace, orders, and settings.
             Log in to unlock personalized features like order tracking and Halal certification management.
           </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
@@ -53,7 +53,7 @@ export default function HomePage() {
               onClick={handleAuthAction}
               className="px-8 py-3 bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              {user ? 'Go to Dashboard' : 'Get Started'} <ArrowRight className="ml-2 h-4 w-4" />
+              {user ? 'Go to Marketplace' : 'Get Started'} <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>

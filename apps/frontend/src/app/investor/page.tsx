@@ -1,18 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Shield, Truck, Globe, BarChart3, Download, Calendar, CheckCircle } from 'lucide-react';
 import { MotionBox, StaggerContainer, StaggerItem, Parallax, ScrollProgress } from '@/components/motion/MotionComponents';
 import { EnhancedButton } from '@/components/motion/EnhancedButton';
-import { springPresets } from '@/lib/animations';
+import { springPresets, cardVariants } from '@/lib/animations';
+import { PDFGeneratorComponent } from '@/components/PDFGenerator';
 
 export default function InvestorPage() {
+  const investorDeckRef = useRef<HTMLDivElement>(null);
+
   return (
     <>
       <ScrollProgress />
-      <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
+      <div ref={investorDeckRef} className="min-h-screen bg-background text-foreground overflow-hidden">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-emerald-50 to-white py-20 overflow-hidden">
           {/* Background Pattern */}
@@ -257,13 +260,13 @@ export default function InvestorPage() {
                 'Multiple Revenue Streams: Fees from logistics, marketplace commissions, SaaS subscriptions for supply chain verification, and data analytics.',
                 'Exceptional Team: Seasoned executives from Fortune 500 logistics, top-tier e-commerce, and Islamic finance.',
                 'Sharia-Compliant Structure: The company and its financial operations are structured to be fully Sharia-compliant, appealing to a vast pool of ethical capital.'
-              ].map((point, _index) => (
-                <StaggerItem key={_index}>
+              ].map((point, index) => (
+                <StaggerItem key={index}>
                   <motion.div
                     className="flex items-start space-x-4 mb-6"
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: _index * 0.1, ...springPresets.gentle }}
+                    transition={{ delay: index * 0.1, ...springPresets.gentle }}
                     viewport={{ once: true }}
                   >
                     <CheckCircle className="w-6 h-6 text-emerald-600 mt-1 flex-shrink-0" />
@@ -335,6 +338,16 @@ export default function InvestorPage() {
 
             <MotionBox variant="scale" delay={0.4}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <PDFGeneratorComponent
+                  variant="investor-deck"
+                  data={{ element: investorDeckRef.current || undefined }}
+                  title="HalalChain Investor Deck"
+                  filename="halalchain-investor-deck.pdf"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Download the Investor Deck
+                </PDFGeneratorComponent>
                 <Link href="/investor-deck.pdf" target="_blank">
                   <EnhancedButton
                     variant="secondary"
@@ -344,7 +357,7 @@ export default function InvestorPage() {
                     className="bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Download the Investor Deck
+                    View Static Investor Deck
                   </EnhancedButton>
                 </Link>
                 <Link href="mailto:investors@halalchain.com">

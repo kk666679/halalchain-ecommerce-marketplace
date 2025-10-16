@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, Product } from '@/types';
 import { Button } from '@/components/Button';
-export default function VendorDashboardPage() {
+export default function VendorMarketplacePage() {
   const [user, setUser] = useState<User | null>(null);
   const [products] = useState<Product[]>([
     {
@@ -13,13 +13,28 @@ export default function VendorDashboardPage() {
       description: 'Fresh, premium halal-certified chicken breast',
       price: 12.99,
       category: 'Meat',
+      sku: 'HB001',
+      barcode: '123456789',
       images: ['/placeholder-product.jpg'],
       vendorId: 'vendor1',
-      vendorName: 'Your Store',
       isHalalCertified: true,
       blockchainHash: '0x1234...abcd',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      stockQuantity: 100,
+      minStockLevel: 10,
+      maxStockLevel: 200,
+      isActive: true,
+      tags: ['halal', 'chicken'],
+      rating: 4.5,
+      reviewCount: 25,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      vendor: {} as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      orderItems: [],
+      inventories: [],
+      certifications: [],
+      cartItems: [],
+      reviews: [],
+      procurements: []
     }
   ]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +52,7 @@ export default function VendorDashboardPage() {
     try {
       const parsedUser = JSON.parse(userData);
       if (parsedUser.role !== 'vendor') {
-        router.push('/dashboard');
+        router.push('/marketplace');
         return;
       }
       setUser(parsedUser);
@@ -52,7 +67,7 @@ export default function VendorDashboardPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-foreground">Loading vendor dashboard...</div>
+        <div className="text-center text-foreground">Loading vendor marketplace...</div>
       </div>
     );
   }
@@ -65,7 +80,7 @@ export default function VendorDashboardPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         <div className="bg-card rounded-lg shadow-md p-6 mb-8 border">
-          <h1 className="text-3xl font-bold text-card-foreground mb-2">Vendor Dashboard</h1>
+          <h1 className="text-3xl font-bold text-card-foreground mb-2">Vendor Marketplace</h1>
           <p className="text-muted-foreground">Welcome back, {user.name}!</p>
         </div>
 

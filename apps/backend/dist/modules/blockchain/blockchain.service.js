@@ -22,12 +22,14 @@ let BlockchainService = class BlockchainService {
             where: { productId },
             orderBy: { issuedAt: 'desc' },
         });
-        return certification ? {
-            isValid: certification.status === 'VERIFIED',
-            hash: certification.blockchainTx,
-            score: certification.halalScore,
-            status: certification.status,
-        } : null;
+        return certification
+            ? {
+                isValid: certification.status === 'VERIFIED',
+                hash: certification.blockchainTx,
+                score: certification.halalScore,
+                status: certification.status,
+            }
+            : null;
     }
     async createCertification(certificationData) {
         const certification = await this.prisma.certification.create({

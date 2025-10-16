@@ -76,7 +76,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="text-lg font-semibold text-card-foreground mb-2">{product.name}</h3>
         <p className="text-muted-foreground text-sm mb-2 line-clamp-2">{product.description}</p>
         <p className="text-primary font-bold text-lg mb-2">${product.price.toFixed(2)}</p>
-        <p className="text-muted-foreground text-sm mb-4">By {product.vendorName}</p>
+        <p className="text-muted-foreground text-sm mb-4">By {product.vendor.storeName}</p>
 
         <div className="flex gap-2">
           <Button

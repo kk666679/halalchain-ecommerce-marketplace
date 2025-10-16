@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api';
 import { Button } from '@/components/Button';
+import { UserRole } from '@/types';
 
 export default function VendorRegisterPage() {
   const [formData, setFormData] = useState({
@@ -34,11 +35,11 @@ export default function VendorRegisterPage() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: 'vendor'
+        role: UserRole.VENDOR
       });
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
-      router.push('/vendor/dashboard');
+      router.push('/vendor/marketplace');
     } catch {
       // Mock registration when backend is not available
       const mockUser = {
@@ -51,7 +52,7 @@ export default function VendorRegisterPage() {
       const mockToken = 'mock-token-' + Date.now();
       localStorage.setItem('token', mockToken);
       localStorage.setItem('user', JSON.stringify(mockUser));
-      router.push('/vendor/dashboard');
+      router.push('/vendor/marketplace');
       console.warn('Backend not available, using mock registration');
     } finally {
       setLoading(false);

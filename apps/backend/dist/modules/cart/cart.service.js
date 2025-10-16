@@ -59,7 +59,7 @@ let CartService = class CartService {
             },
         });
         const total = cartItems.reduce((sum, item) => {
-            return sum + (item.product.price * item.quantity);
+            return sum + item.product.price * item.quantity;
         }, 0);
         return {
             items: cartItems,
@@ -124,7 +124,7 @@ let CartService = class CartService {
                 throw new common_1.BadRequestException(`Insufficient stock for ${item.product.name}`);
             }
         }
-        const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+        const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
         const order = await this.prisma.order.create({
             data: {
                 orderNumber: `ORD-${Date.now()}`,

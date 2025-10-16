@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 
 @Injectable()
@@ -58,7 +62,7 @@ export class CartService {
     });
 
     const total = cartItems.reduce((sum, item) => {
-      return sum + (item.product.price * item.quantity);
+      return sum + item.product.price * item.quantity;
     }, 0);
 
     return {
@@ -136,12 +140,17 @@ export class CartService {
     // Check stock availability
     for (const item of cartItems) {
       if (item.product.stockQuantity < item.quantity) {
-        throw new BadRequestException(`Insufficient stock for ${item.product.name}`);
+        throw new BadRequestException(
+          `Insufficient stock for ${item.product.name}`,
+        );
       }
     }
 
-    const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-    
+    const total = cartItems.reduce(
+      (sum, item) => sum + item.product.price * item.quantity,
+      0,
+    );
+
     // Create order
     const order = await this.prisma.order.create({
       data: {

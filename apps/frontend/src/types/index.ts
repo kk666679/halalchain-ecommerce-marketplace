@@ -102,7 +102,7 @@ export interface Product {
   dimensions?: string;
   images: string[];
   vendorId: string;
-  halalCertified: boolean;
+  isHalalCertified: boolean;
   blockchainHash?: string;
   stockQuantity: number;
   minStockLevel: number;
@@ -133,8 +133,8 @@ export interface Order {
   total: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
-  shippingAddress: any; // JSON
-  billingAddress?: any; // JSON
+  shippingAddress: Record<string, unknown>; // JSON
+  billingAddress?: Record<string, unknown>; // JSON
   notes?: string;
   trackingNumber?: string;
   estimatedDelivery?: Date;
@@ -183,7 +183,7 @@ export interface Certification {
   issuedAt: Date;
   expiresAt?: Date;
   certificateUrl?: string;
-  auditTrail: any; // JSON
+  auditTrail: Record<string, unknown>; // JSON
   smartContract?: string;
   product: Product;
 }
@@ -228,7 +228,7 @@ export interface Payment {
   status: PaymentStatus;
   paymentMethod: string; // 'stripe', 'paypal', 'crypto'
   transactionId?: string;
-  gatewayResponse?: any; // JSON
+  gatewayResponse?: Record<string, unknown>; // JSON
   createdAt: Date;
   updatedAt: Date;
   order?: Order;
@@ -254,7 +254,7 @@ export interface Warehouse {
   id: string;
   name: string;
   vendorId?: string;
-  address: any; // JSON
+  address: Record<string, unknown>; // JSON
   capacity?: number;
   isActive: boolean;
   createdAt: Date;
@@ -269,7 +269,7 @@ export interface Supplier {
   name: string;
   email: string;
   phone?: string;
-  address: any; // JSON
+  address: Record<string, unknown>; // JSON
   vendorId?: string;
   status: SupplierStatus;
   rating?: number;
@@ -304,7 +304,7 @@ export interface Shipment {
   trackingNumber: string;
   carrier: string;
   status: ShipmentStatus;
-  shippingAddress: any; // JSON
+  shippingAddress: Record<string, unknown>; // JSON
   estimatedDelivery?: Date;
   actualDelivery?: Date;
   createdAt: Date;
@@ -318,10 +318,10 @@ export interface AIAgent {
   name: string;
   type: AIAgentType;
   description?: string;
-  config: any; // JSON
+  config: Record<string, unknown>; // JSON
   isActive: boolean;
   lastRun?: Date;
-  performance: any; // JSON
+  performance: Record<string, unknown>; // JSON
   accuracy?: number;
   priority: number;
   createdAt: Date;
@@ -334,12 +334,12 @@ export interface AIAgentLog {
   id: string;
   agentId: string;
   action: string;
-  input?: any; // JSON
-  output?: any; // JSON
+  input?: Record<string, unknown>; // JSON
+  output?: Record<string, unknown>; // JSON
   status: string; // 'SUCCESS', 'ERROR', 'RUNNING'
   duration?: number; // milliseconds
   confidence?: number; // AI confidence score
-  metadata?: any; // JSON
+  metadata?: Record<string, unknown>; // JSON
   createdAt: Date;
   agent: AIAgent;
 }
@@ -364,7 +364,7 @@ export interface Analytics {
   id: string;
   metric: string; // 'sales', 'inventory_turnover', 'customer_satisfaction'
   value: number;
-  metadata?: any; // JSON
+  metadata?: Record<string, unknown>; // JSON
   date: Date;
   createdAt: Date;
 }
@@ -383,7 +383,7 @@ export interface BlockchainTransaction {
   network: string; // 'ethereum', 'polygon', 'bsc', etc.
   contractAddress?: string;
   eventName?: string;
-  eventData?: any; // JSON
+  eventData?: Record<string, unknown>; // JSON
   entityId: string; // Related entity ID (product, certification, etc.)
   entityType: string; // 'CERTIFICATION', 'PRODUCT', 'ORDER', etc.
   confirmedAt?: Date;
@@ -395,7 +395,7 @@ export interface SmartContract {
   name: string;
   address: string;
   network: string; // 'ethereum', 'polygon', 'bsc', etc.
-  abi: any; // JSON
+  abi: Record<string, unknown>; // JSON
   bytecode?: string;
   deployedAt?: Date;
   deployer?: string;
@@ -436,8 +436,8 @@ export interface CheckoutData {
   paymentMethod: string;
 }
 
-// Dashboard Types
-export type DashboardRole = 'Admin' | 'SEO Manager' | 'Content Editor' | 'Sales Rep';
+// Marketplace Types
+export type MarketplaceRole = 'Admin' | 'SEO Manager' | 'Content Editor' | 'Sales Rep';
 
 export interface Permission {
   module: 'SEO' | 'CMS' | 'CRM';

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
 import { Trash2, Plus, Minus, ShoppingBag, Shield } from 'lucide-react';
 
@@ -90,9 +91,11 @@ export default function CartPage() {
                     {/* Product Image */}
                     <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
                       {item.product.images?.[0] ? (
-                        <img
+                        <Image
                           src={item.product.images[0]}
                           alt={item.product.name}
+                          width={80}
+                          height={80}
                           className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
