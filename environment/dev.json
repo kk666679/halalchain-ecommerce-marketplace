@@ -14,5 +14,9 @@
   },
   "jwt": {
     "secret": "your-jwt-secret"
+  },
+  "openai": {
+    "api_key": "your-openai-api-key",
+    "base_url": "https://api.openai.com/v1"
   }
 }

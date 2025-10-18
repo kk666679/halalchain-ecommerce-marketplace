@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, FileText, Users, BarChart3, Settings } from 'lucide-react';
+import { Plus, Search, FileText, Users, BarChart3 } from 'lucide-react';
 
 interface QuickAction {
   title: string;

@@ -13,12 +13,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error('Backend request failed');
+      const errorText = await response.text();
+      throw new Error(`Backend request failed: ${response.status} ${errorText}`);
     }
 
     const generatedSite = await response.json();
     return NextResponse.json(generatedSite);
   } catch (error) {
+    console.error('Generate site API error:', error);
     // Fallback to mock
     const generatedSite = {
       hero: 'Welcome to Your Amazing Site',

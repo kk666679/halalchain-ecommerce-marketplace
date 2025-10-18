@@ -8,7 +8,6 @@ import { StatsCards } from '@/components/marketplace/stats-cards';
 import { QuickActions } from '@/components/marketplace/quick-actions';
 import { RecentActivity } from '@/components/marketplace/recent-activity';
 import { MotionBox, StaggerContainer, StaggerItem } from '@/components/motion/MotionComponents';
-import { ScrollProgress } from '@/components/motion/MotionComponents';
 
 type MarketplaceModule = 'SEO' | 'CMS' | 'CRM';
 
@@ -54,7 +53,6 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <ScrollProgress />
 
       {/* Header */}
       <MotionBox className="bg-card border-b border-border shadow-sm">

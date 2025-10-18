@@ -51,7 +51,10 @@ export default function AIChatPage() {
         body: JSON.stringify({ messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })) }),
       });
 
-      if (!res.ok) throw new Error('Network error');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Network error' }));
+        throw new Error(errorData.error || 'Network error');
+      }
 
       const data = await res.json();
       const assistantMessage: Message = {

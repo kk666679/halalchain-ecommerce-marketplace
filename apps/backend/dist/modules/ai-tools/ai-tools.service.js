@@ -15,103 +15,122 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiToolsService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
-const sdk_1 = __importDefault(require("@anthropic-ai/sdk"));
+const openai_1 = __importDefault(require("openai"));
 const rxjs_1 = require("rxjs");
 const prisma_service_1 = require("../../common/prisma.service");
 let AiToolsService = class AiToolsService {
     prisma;
     httpService;
-    anthropic = null;
+    openai = null;
     constructor(prisma, httpService) {
         this.prisma = prisma;
         this.httpService = httpService;
-        const apiKey = process.env.ANTHROPIC_API_KEY;
-        if (apiKey) {
-            this.anthropic = new sdk_1.default({
-                apiKey,
-            });
+        const apiKey = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+        const baseURL = 'https://ai-gateway.vercel.sh/v1';
+        this.openai = new openai_1.default({
+            apiKey,
+            baseURL,
+        });
+    }
+    async getChatCompletion(messages) {
+        if (!this.openai) {
+            throw new Error('OpenAI instance is not initialized.');
         }
-        else {
-            console.warn('ANTHROPIC_API_KEY not set, using mock responses');
-        }
+        const completion = await this.openai.chat.completions.create({
+            model: 'anthropic/claude-sonnet-4',
+            messages,
+        });
+        return completion.choices[0].message.content;
     }
     tools = [
         {
-            name: 'query_database',
-            description: 'Run a safe parameterized SQL query on the database. Returns JSON results.',
-            input_schema: {
-                type: 'object',
-                properties: {
-                    query: {
-                        type: 'string',
-                        description: 'The SQL query to execute',
+            type: 'function',
+            function: {
+                name: 'query_database',
+                description: 'Run a safe parameterized SQL query on the database. Returns JSON results.',
+                parameters: {
+                    type: 'object',
+                    properties: {
+                        query: {
+                            type: 'string',
+                            description: 'The SQL query to execute',
+                        },
+                        params: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            description: 'Parameters for the query',
+                        },
                     },
-                    params: {
-                        type: 'array',
-                        items: { type: 'string' },
-                        description: 'Parameters for the query',
-                    },
+                    required: ['query'],
                 },
-                required: ['query'],
             },
         },
         {
-            name: 'api_request',
-            description: 'Make an authenticated request to an external API.',
-            input_schema: {
-                type: 'object',
-                properties: {
-                    url: {
-                        type: 'string',
-                        description: 'The API endpoint URL',
+            type: 'function',
+            function: {
+                name: 'api_request',
+                description: 'Make an authenticated request to an external API.',
+                parameters: {
+                    type: 'object',
+                    properties: {
+                        url: {
+                            type: 'string',
+                            description: 'The API endpoint URL',
+                        },
+                        method: {
+                            type: 'string',
+                            enum: ['GET', 'POST', 'PUT', 'DELETE'],
+                            description: 'HTTP method',
+                        },
+                        headers: {
+                            type: 'object',
+                            description: 'Request headers',
+                        },
+                        body: {
+                            type: 'string',
+                            description: 'Request body as JSON string',
+                        },
                     },
-                    method: {
-                        type: 'string',
-                        enum: ['GET', 'POST', 'PUT', 'DELETE'],
-                        description: 'HTTP method',
-                    },
-                    headers: {
-                        type: 'object',
-                        description: 'Request headers',
-                    },
-                    body: {
-                        type: 'string',
-                        description: 'Request body as JSON string',
-                    },
+                    required: ['url', 'method'],
                 },
-                required: ['url', 'method'],
             },
         },
         {
-            name: 'translate',
-            description: 'Translate text to a target language.',
-            input_schema: {
-                type: 'object',
-                properties: {
-                    text: {
-                        type: 'string',
-                        description: 'Text to translate',
+            type: 'function',
+            function: {
+                name: 'translate',
+                description: 'Translate text to a target language.',
+                parameters: {
+                    type: 'object',
+                    properties: {
+                        text: {
+                            type: 'string',
+                            description: 'Text to translate',
+                        },
+                        target_lang: {
+                            type: 'string',
+                            description: 'Target language code, e.g., "es" for Spanish',
+                        },
                     },
-                    target_lang: {
-                        type: 'string',
-                        description: 'Target language code, e.g., "es" for Spanish',
-                    },
+                    required: ['text', 'target_lang'],
                 },
-                required: ['text', 'target_lang'],
             },
         },
         {
-            name: 'seo_analyzer',
-            description: 'Analyze a webpage for SEO best practices.',
-            input_schema: {
-                type: 'object',
-                properties: {
-                    url: {
-                        type: 'string',
-                        description: 'The URL of the webpage to analyze',
+            type: 'function',
+            function: {
+                name: 'seo_analyzer',
+                description: 'Analyze a webpage for SEO best practices.',
+                parameters: {
+                    type: 'object',
+                    properties: {
+                        url: {
+                            type: 'string',
+                            description: 'The URL of the webpage to analyze',
+                        },
                     },
+                    required: ['url'],
                 },
-                required: ['url'],
             },
         },
     ];
@@ -130,7 +149,7 @@ let AiToolsService = class AiToolsService {
         }
     }
     async chat(messages) {
-        if (!this.anthropic) {
+        if (!this.openai) {
             return {
                 role: 'assistant',
                 content: "I'm sorry, but the AI service is currently unavailable. Please try again later.",
@@ -146,9 +165,9 @@ let AiToolsService = class AiToolsService {
 - Islamic business ethics and guidelines
 
 Always provide helpful, accurate information while respecting Islamic principles. If you need to use tools for database queries or external data, do so appropriately.`;
-        const anthropicMessages = [
+        const openaiMessages = [
             {
-                role: 'assistant',
+                role: 'system',
                 content: systemPrompt,
             },
             ...messages.map((msg) => ({
@@ -156,49 +175,53 @@ Always provide helpful, accurate information while respecting Islamic principles
                 content: msg.content,
             })),
         ];
-        const response = await this.anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20241022',
+        const response = await this.openai.chat.completions.create({
+            model: "qwen/qwen2.5-coder-32b-instruct",
             max_tokens: 4096,
-            messages: anthropicMessages,
+            messages: openaiMessages,
             tools: this.tools,
+            temperature: 0.2,
+            top_p: 0.7,
+            stream: false,
         });
-        if (response.stop_reason === 'tool_use') {
-            const toolCalls = response.content.filter((c) => c.type === 'tool_use');
-            for (const toolCall of toolCalls) {
-                const result = await this.handleToolCall(toolCall.name, toolCall.input);
-                anthropicMessages.push({
-                    role: 'assistant',
-                    content: response.content,
-                });
-                anthropicMessages.push({
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'tool_result',
-                            tool_call_id: toolCall.id,
-                            content: JSON.stringify(result),
-                        },
-                    ],
-                });
+        if (response.choices[0].finish_reason === 'tool_calls') {
+            const toolCalls = response.choices[0].message.tool_calls;
+            if (toolCalls) {
+                for (const toolCall of toolCalls) {
+                    const result = await this.handleToolCall(toolCall.function.name, JSON.parse(toolCall.function.arguments));
+                    openaiMessages.push({
+                        role: 'assistant',
+                        content: response.choices[0].message.content || '',
+                        tool_calls: toolCalls,
+                    });
+                    openaiMessages.push({
+                        role: 'tool',
+                        content: JSON.stringify(result),
+                        tool_call_id: toolCall.id,
+                    });
+                }
             }
-            const finalResponse = await this.anthropic.messages.create({
-                model: 'claude-3-5-sonnet-20241022',
+            const finalResponse = await this.openai.chat.completions.create({
+                model: "qwen/qwen2.5-coder-32b-instruct",
                 max_tokens: 4096,
-                messages: anthropicMessages,
+                messages: openaiMessages,
                 tools: this.tools,
+                temperature: 0.2,
+                top_p: 0.7,
+                stream: false,
             });
             return {
                 role: 'assistant',
-                content: finalResponse.content[0].text,
+                content: finalResponse.choices[0].message.content || '',
             };
         }
         return {
             role: 'assistant',
-            content: response.content[0].text,
+            content: response.choices[0].message.content || '',
         };
     }
     async generateSite(prompt) {
-        if (!this.anthropic) {
+        if (!this.openai) {
             return {
                 hero: 'Welcome to Your Halal Business Site',
                 features: 'Our Halal Products and Services',
@@ -206,6 +229,10 @@ Always provide helpful, accurate information while respecting Islamic principles
             };
         }
         const messages = [
+            {
+                role: 'system',
+                content: `You are a website generator specialized in creating Halal-compliant business websites. Generate structured JSON output for website components.`,
+            },
             {
                 role: 'user',
                 content: `Generate a professional business website focused on halal products/services with the following structure:
@@ -217,43 +244,47 @@ Always provide helpful, accurate information while respecting Islamic principles
 
 Design guidelines: Clean, modern UI, mobile-friendly, accessible, respectful of cultural and religious sensitivities.
 
-User prompt: ${prompt}. Use available tools to fetch dynamic data if needed.`,
+User prompt: ${prompt}. Use available tools to fetch dynamic data if needed. Return JSON structure.`,
             },
         ];
-        const response = await this.anthropic.messages.create({
-            model: 'claude-3-5-sonnet-20241022',
+        const response = await this.openai.chat.completions.create({
+            model: "qwen/qwen2.5-coder-32b-instruct",
             max_tokens: 4096,
             messages,
             tools: this.tools,
+            temperature: 0.2,
+            top_p: 0.7,
+            stream: false,
         });
-        if (response.stop_reason === 'tool_use') {
-            const toolCalls = response.content.filter((c) => c.type === 'tool_use');
-            for (const toolCall of toolCalls) {
-                const result = await this.handleToolCall(toolCall.name, toolCall.input);
-                messages.push({
-                    role: 'assistant',
-                    content: response.content,
-                });
-                messages.push({
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'tool_result',
-                            tool_call_id: toolCall.id,
-                            content: JSON.stringify(result),
-                        },
-                    ],
-                });
+        if (response.choices[0].finish_reason === 'tool_calls') {
+            const toolCalls = response.choices[0].message.tool_calls;
+            if (toolCalls) {
+                for (const toolCall of toolCalls) {
+                    const result = await this.handleToolCall(toolCall.function.name, JSON.parse(toolCall.function.arguments));
+                    messages.push({
+                        role: 'assistant',
+                        content: response.choices[0].message.content || '',
+                        tool_calls: toolCalls,
+                    });
+                    messages.push({
+                        role: 'tool',
+                        content: JSON.stringify(result),
+                        tool_call_id: toolCall.id,
+                    });
+                }
             }
-            const finalResponse = await this.anthropic.messages.create({
-                model: 'claude-3-5-sonnet-20241022',
+            const finalResponse = await this.openai.chat.completions.create({
+                model: "qwen/qwen2.5-coder-32b-instruct",
                 max_tokens: 4096,
                 messages,
                 tools: this.tools,
+                temperature: 0.2,
+                top_p: 0.7,
+                stream: false,
             });
-            return this.parseSite(finalResponse.content[0].text);
+            return this.parseSite(finalResponse.choices[0].message.content || '');
         }
-        return this.parseSite(response.content[0].text);
+        return this.parseSite(response.choices[0].message.content || '');
     }
     parseSite(content) {
         try {

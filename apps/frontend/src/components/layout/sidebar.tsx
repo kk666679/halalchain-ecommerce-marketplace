@@ -1,11 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   BarChart3,
   FileText,
@@ -87,9 +85,9 @@ export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
                   <>
                     <span className="ml-2">{module}</span>
                     {role === 'Admin' && (
-                      <Badge variant="outline" className="ml-auto text-xs">
+                      <span className="ml-auto text-xs bg-outline px-1 rounded">
                         Full
-                      </Badge>
+                      </span>
                     )}
                   </>
                 )}

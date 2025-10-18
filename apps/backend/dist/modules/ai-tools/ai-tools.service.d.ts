@@ -1,10 +1,12 @@
 import { HttpService } from '@nestjs/axios';
+import OpenAI from 'openai';
 import { PrismaService } from '../../common/prisma.service';
 export declare class AiToolsService {
     private prisma;
     private httpService;
-    private anthropic;
+    private openai;
     constructor(prisma: PrismaService, httpService: HttpService);
+    getChatCompletion(messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]): Promise<string | null>;
     private tools;
     private handleToolCall;
     chat(messages: Array<{

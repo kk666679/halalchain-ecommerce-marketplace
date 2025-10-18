@@ -50,6 +50,10 @@ When discussing products or services, always consider:
 Remember: Your role is to guide users toward Shariah-compliant business practices while providing practical, actionable advice for the HalalChain platform.`;
 
 export async function POST(request: NextRequest) {
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
+  }
+
   try {
     const { messages }: { messages: ChatMessage[] } = await request.json();
 
@@ -74,7 +78,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Chat API error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate response' },
+      { error: error instanceof Error ? error.message : 'Failed to generate response' },
       { status: 500 }
     );
   }

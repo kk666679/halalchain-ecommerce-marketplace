@@ -1,7 +1,7 @@
 // Prisma schema for HalalChain E-commerce Platform
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -50,6 +50,19 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum HalalCategory {
+  FOOD_BEVERAGE
+  PERSONAL_CARE
+  HEALTH_PHARMA
+  FASHION
+  HOME_LIFESTYLE
+  AUTOMOTIVE_INDUSTRIAL
+  TRAVEL_HOSPITALITY
+  DIGITAL_NFT
+  ISLAMIC_EDUCATIONAL
+  AGRICULTURE_RAW
+}
+
 enum AIAgentType {
   FRAUD_DETECTION
   SENTIMENT_ANALYSIS
@@ -62,6 +75,7 @@ enum AIAgentType {
   CUSTOMER_INSIGHT
   MARKET_ANALYSIS
   QUALITY_ASSURANCE
+  BLOCKCHAIN_SMART_CONTRACT
 }
 
 model User {
