@@ -139,7 +139,7 @@ let AiToolsService = class AiToolsService {
             case 'query_database':
                 return await this.queryDatabase(args.query, args.params || []);
             case 'api_request':
-                return await this.apiRequest(args.url, args.method, args.headers, args.body);
+                return await this.apiRequest(args.url, args.method, args.headers || {}, args.body || '');
             case 'translate':
                 return await this.translate(args.text, args.target_lang);
             case 'seo_analyzer':
@@ -202,7 +202,7 @@ Always provide helpful, accurate information while respecting Islamic principles
                 }
             }
             const finalResponse = await this.openai.chat.completions.create({
-                model: "qwen/qwen2.5-coder-32b-instruct",
+                model: 'qwen/qwen2.5-coder-32b-instruct',
                 max_tokens: 4096,
                 messages: openaiMessages,
                 tools: this.tools,
@@ -303,7 +303,7 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed. Ret
             if (!query.toLowerCase().startsWith('select')) {
                 throw new Error('Only SELECT queries are allowed');
             }
-            const result = await this.prisma.$queryRaw(query, ...params);
+            const result = await this.prisma.$queryRawUnsafe(query, ...params);
             return { result, rowCount: Array.isArray(result) ? result.length : 0 };
         }
         catch (error) {

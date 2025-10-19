@@ -1,7 +1,8 @@
 # Dependency Update Tasks
 
-- [x] Check for outdated packages in the monorepo
-- [x] Update dependencies using npm update
-- [x] Fix security vulnerabilities with npm audit fix (attempted, some require --force)
-- [x] Run builds for frontend and backend to verify updates (backend completed, frontend has prerendering issue - resolved)
-- [x] Run npm audit fix --force to address remaining vulnerabilities
+- [x] Update dependencies in root package.json
+- [x] Update dependencies in apps/frontend/package.json
+- [x] Update dependencies in apps/backend/package.json
+- [x] Run npm install to update package-lock.json
+- [x] Fix backend build errors (TypeScript errors in ai-tools.service.ts)
+- [x] Verify builds work after updates

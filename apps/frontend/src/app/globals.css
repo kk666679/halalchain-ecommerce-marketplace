@@ -248,10 +248,10 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
     background: var(--neon-bg-gradient);
-    @apply text-foreground;
+    color: hsl(var(--foreground));
   }
 }

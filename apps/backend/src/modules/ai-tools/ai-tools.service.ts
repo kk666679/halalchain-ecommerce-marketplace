@@ -1,8 +1,37 @@
- import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import OpenAI from 'openai';
 import { firstValueFrom } from 'rxjs';
 import { PrismaService } from '../../common/prisma.service';
+
+interface QueryDatabaseArgs {
+  query: string;
+  params?: string[];
+}
+
+interface ApiRequestArgs {
+  url: string;
+  method: string;
+  headers?: Record<string, string>;
+  body?: string;
+}
+
+interface ToolCall {
+  function: {
+    name: string;
+    arguments: string;
+  };
+  id: string;
+}
+
+interface TranslateArgs {
+  text: string;
+  target_lang: string;
+}
+
+interface SeoAnalyzerArgs {
+  url: string;
+}
 
 @Injectable()
 export class AiToolsService {
@@ -132,18 +161,18 @@ export class AiToolsService {
   private async handleToolCall(toolName: string, args: any) {
     switch (toolName) {
       case 'query_database':
-        return await this.queryDatabase(args.query, args.params || []);
+        return await this.queryDatabase((args as QueryDatabaseArgs).query, (args as QueryDatabaseArgs).params || []);
       case 'api_request':
         return await this.apiRequest(
-          args.url,
-          args.method,
-          args.headers,
-          args.body,
+          (args as ApiRequestArgs).url,
+          (args as ApiRequestArgs).method,
+          (args as ApiRequestArgs).headers || {},
+          (args as ApiRequestArgs).body || '',
         );
       case 'translate':
-        return await this.translate(args.text, args.target_lang);
+        return await this.translate((args as TranslateArgs).text, (args as TranslateArgs).target_lang);
       case 'seo_analyzer':
-        return await this.seoAnalyzer(args.url);
+        return await this.seoAnalyzer((args as SeoAnalyzerArgs).url);
       default:
         throw new Error(`Unknown tool: ${toolName}`);
     }
@@ -193,14 +222,14 @@ Always provide helpful, accurate information while respecting Islamic principles
       stream: false,
     });
 
-    // Handle tool calls
+
     if (response.choices[0].finish_reason === 'tool_calls') {
       const toolCalls = response.choices[0].message.tool_calls;
       if (toolCalls) {
         for (const toolCall of toolCalls) {
           const result = await this.handleToolCall(
-            toolCall.function.name,
-            JSON.parse(toolCall.function.arguments),
+            (toolCall as ToolCall).function.name,
+            JSON.parse((toolCall as ToolCall).function.arguments),
           );
           openaiMessages.push({
             role: 'assistant',
@@ -217,7 +246,7 @@ Always provide helpful, accurate information while respecting Islamic principles
 
       // Get final response
       const finalResponse = await this.openai.chat.completions.create({
-        model: "qwen/qwen2.5-coder-32b-instruct",
+        model: 'qwen/qwen2.5-coder-32b-instruct',
         max_tokens: 4096,
         messages: openaiMessages,
         tools: this.tools,
@@ -231,7 +260,6 @@ Always provide helpful, accurate information while respecting Islamic principles
         content: finalResponse.choices[0].message.content || '',
       };
     }
-
     return {
       role: 'assistant',
       content: response.choices[0].message.content || '',
@@ -284,8 +312,8 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed. Ret
       if (toolCalls) {
         for (const toolCall of toolCalls) {
           const result = await this.handleToolCall(
-            toolCall.function.name,
-            JSON.parse(toolCall.function.arguments),
+            (toolCall as ToolCall).function.name,
+            JSON.parse((toolCall as ToolCall).function.arguments),
           );
           messages.push({
             role: 'assistant',
@@ -337,7 +365,7 @@ User prompt: ${prompt}. Use available tools to fetch dynamic data if needed. Ret
       if (!query.toLowerCase().startsWith('select')) {
         throw new Error('Only SELECT queries are allowed');
       }
-      const result = await this.prisma.$queryRaw(query, ...params);
+      const result = await this.prisma.$queryRawUnsafe(query, ...params);
       return { result, rowCount: Array.isArray(result) ? result.length : 0 };
     } catch (error) {
       return { error: error.message };
