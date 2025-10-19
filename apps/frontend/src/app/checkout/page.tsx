@@ -1,179 +1,131 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCart } from '@/hooks/useCart';
 
 export default function CheckoutPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-    city: "",
-    country: "",
-    paymentMethod: "credit-card",
+  const router = useRouter();
+  const { cart, loading, checkout } = useCart();
+  const [shippingInfo, setShippingInfo] = useState({
+    name: '',
+    address: '',
   });
-
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setShippingInfo(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setError('');
 
-    setTimeout(() => {
-      setLoading(false);
+    if (!shippingInfo.name.trim() || !shippingInfo.address.trim()) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    if (cart.items.length === 0) {
+      setError('Your cart is empty');
+      return;
+    }
+
+    try {
+      await checkout();
       setSuccess(true);
-    }, 1500);
+      // Redirect to success page or order confirmation after a delay
+      setTimeout(() => {
+        router.push('/marketplace');
+      }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Checkout failed. Please try again.');
+    }
   };
 
   if (success) {
     return (
-      <motion.div
-        className="flex flex-col items-center justify-center min-h-screen text-center"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1 className="text-3xl font-semibold text-green-600 mb-4">
-          ✅ Payment Successful!
-        </h1>
-        <p className="text-gray-600">Thank you for supporting HalalChain.</p>
-      </motion.div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50 to-white p-8">
+        <div className="bg-white shadow-xl p-8 rounded-2xl max-w-md w-full text-center">
+          <div className="text-green-600 text-6xl mb-4">✓</div>
+          <h1 className="text-2xl font-bold text-emerald-800 mb-4">Order Placed Successfully!</h1>
+          <p className="text-gray-600 mb-4">Thank you for your purchase. Your order has been processed.</p>
+          <p className="text-sm text-gray-500">Redirecting to marketplace...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      className="max-w-3xl mx-auto px-6 py-10"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-        Checkout
-      </h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-50 to-white p-8">
+      <h1 className="text-3xl font-bold text-emerald-800 mb-8">Checkout</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Customer Details */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
+      <div className="bg-white shadow-xl p-6 rounded-2xl max-w-md w-full">
+        {/* Cart Summary */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Order Summary</h2>
+          <div className="space-y-2">
+            {cart.items.map((item) => (
+              <div key={item.id} className="flex justify-between text-sm">
+                <span>{item.product.name} x{item.quantity}</span>
+                <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+              </div>
+            ))}
+            <div className="border-t pt-2 mt-2">
+              <div className="flex justify-between font-semibold">
+                <span>Total</span>
+                <span>${cart.total.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Shipping Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block mb-2 font-semibold">Full Name</label>
             <input
               type="text"
               name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Full Name"
+              value={shippingInfo.name}
+              onChange={handleInputChange}
               required
-              className="p-3 border border-gray-300 rounded-md w-full"
-            />
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email Address"
-              required
-              className="p-3 border border-gray-300 rounded-md w-full"
+              className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             />
           </div>
 
-          <input
-            type="text"
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            placeholder="Address"
-            required
-            className="p-3 border border-gray-300 rounded-md w-full mt-4"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <input
-              type="text"
-              name="city"
-              value={form.city}
-              onChange={handleChange}
-              placeholder="City"
+          <div>
+            <label className="block mb-2 font-semibold">Shipping Address</label>
+            <textarea
+              name="address"
+              value={shippingInfo.address}
+              onChange={handleInputChange}
               required
-              className="p-3 border border-gray-300 rounded-md w-full"
-            />
-            <input
-              type="text"
-              name="country"
-              value={form.country}
-              onChange={handleChange}
-              placeholder="Country"
-              required
-              className="p-3 border border-gray-300 rounded-md w-full"
+              rows={3}
+              className="w-full border rounded-xl p-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             />
           </div>
-        </motion.div>
 
-        {/* Payment Method */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
-          <select
-            name="paymentMethod"
-            value={form.paymentMethod}
-            onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-md w-full"
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || cart.items.length === 0}
+            className="w-full bg-emerald-700 text-white py-3 rounded-xl hover:bg-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <option value="credit-card">Credit / Debit Card</option>
-            <option value="paypal">PayPal</option>
-            <option value="crypto">HalalChain Wallet</option>
-          </select>
-        </motion.div>
-
-        {/* Order Summary */}
-        <motion.div
-          className="bg-gray-50 p-6 rounded-lg shadow-sm"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-          <div className="flex justify-between text-gray-700 mb-2">
-            <span>Subtotal</span>
-            <span>$100.00</span>
-          </div>
-          <div className="flex justify-between text-gray-700 mb-2">
-            <span>Shipping</span>
-            <span>$5.00</span>
-          </div>
-          <div className="flex justify-between font-semibold text-gray-900">
-            <span>Total</span>
-            <span>$105.00</span>
-          </div>
-        </motion.div>
-
-        {/* Submit Button */}
-        <motion.button
-          type="submit"
-          className="w-full bg-green-600 text-white py-3 rounded-md font-medium hover:bg-green-700 transition"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          disabled={loading}
-        >
-          {loading ? "Processing..." : "Complete Checkout"}
-        </motion.button>
-      </form>
-    </motion.div>
+            {loading ? 'Processing…' : 'Complete Purchase'}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

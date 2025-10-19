@@ -1,15 +1,17 @@
-'use client';
+import { ReactNode } from 'react';
+import { Sidebar } from '@/components/ai/Sidebar';
 
-import React from 'react';
-
-interface LayoutProps {
-  children: React.ReactNode;
+interface AISiteGeneratorLayoutProps {
+  children: ReactNode;
 }
 
-export default function AISiteGeneratorLayout({ children }: LayoutProps) {
+export default function AISiteGeneratorLayout({
+  children,
+}: AISiteGeneratorLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1">
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 overflow-auto">
         {children}
       </main>
     </div>

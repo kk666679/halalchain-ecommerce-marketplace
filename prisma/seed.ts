@@ -9,10 +9,10 @@ async function main() {
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 10);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@halalchain.com' },
+    where: { email: 'admin@halalchain.xyz' },
     update: {},
     create: {
-      email: 'admin@halalchain.com',
+      email: 'admin@halalchain.xyz',
       password: adminPassword,
       name: 'HalalChain Admin',
       role: UserRole.ADMIN,
@@ -22,9 +22,11 @@ async function main() {
 
   // Create vendor users
   const vendorPassword = await bcrypt.hash('vendor123', 10);
-  const vendor1 = await prisma.user.create({
-    data: {
-      email: 'vendor1@halalchain.com',
+  const vendor1 = await prisma.user.upsert({
+    where: { email: 'vendor1@halalchain.xyz' },
+    update: {},
+    create: {
+      email: 'vendor1@halalchain.xyz',
       password: vendorPassword,
       name: 'Halal Meats Co Owner',
       role: UserRole.VENDOR,
@@ -32,9 +34,11 @@ async function main() {
     },
   });
 
-  const vendor2 = await prisma.user.create({
-    data: {
-      email: 'vendor2@halalchain.com',
+  const vendor2 = await prisma.user.upsert({
+    where: { email: 'vendor2@halalchain.xyz' },
+    update: {},
+    create: {
+      email: 'vendor2@halalchain.xyz',
       password: vendorPassword,
       name: 'Desert Fruits Owner',
       role: UserRole.VENDOR,
@@ -43,8 +47,10 @@ async function main() {
   });
 
   // Create vendor profiles
-  const vendorProfile1 = await prisma.vendor.create({
-    data: {
+  const vendorProfile1 = await prisma.vendor.upsert({
+    where: { userId: vendor1.id },
+    update: {},
+    create: {
       userId: vendor1.id,
       storeName: 'Halal Meats Co',
       description: 'Premium halal-certified meat products',
@@ -54,8 +60,10 @@ async function main() {
     },
   });
 
-  const vendorProfile2 = await prisma.vendor.create({
-    data: {
+  const vendorProfile2 = await prisma.vendor.upsert({
+    where: { userId: vendor2.id },
+    update: {},
+    create: {
       userId: vendor2.id,
       storeName: 'Desert Fruits',
       description: 'Organic dates and dried fruits',
@@ -95,8 +103,10 @@ async function main() {
   });
 
   // Create suppliers
-  const supplier1 = await prisma.supplier.create({
-    data: {
+  const supplier1 = await prisma.supplier.upsert({
+    where: { email: 'contact@halalfarms.com' },
+    update: {},
+    create: {
       name: 'Premium Halal Farms',
       email: 'contact@halalfarms.com',
       phone: '+1-555-0101',
@@ -114,8 +124,10 @@ async function main() {
 
   // Create products
   const products = await Promise.all([
-    prisma.product.create({
-      data: {
+    prisma.product.upsert({
+      where: { sku: 'HCB-001' },
+      update: {},
+      create: {
         name: 'Halal Chicken Breast',
         description: 'Fresh, premium halal-certified chicken breast',
         price: 12.99,
@@ -132,8 +144,10 @@ async function main() {
         reviewCount: 23,
       },
     }),
-    prisma.product.create({
-      data: {
+    prisma.product.upsert({
+      where: { sku: 'OMD-001' },
+      update: {},
+      create: {
         name: 'Organic Medjool Dates',
         description: 'Premium Medjool dates from certified organic farms',
         price: 8.50,
@@ -148,6 +162,29 @@ async function main() {
         tags: ['organic', 'halal', 'natural'],
         rating: 4.9,
         reviewCount: 45,
+      },
+    }),
+    prisma.product.upsert({
+      where: { sku: 'HCP-BEEF-001' },
+      update: {},
+      create: {
+        name: 'HalalChain Promise - Premium Beef Halal',
+        description: 'Our signature promise product: Premium halal-certified beef, guaranteed fresh and ethically sourced. HalalChain Promise ensures the highest quality standards with blockchain verification.',
+        price: 24.99,
+        compareAtPrice: 29.99,
+        category: 'Meat',
+        subcategory: 'Beef',
+        sku: 'HCP-BEEF-001',
+        vendorId: vendorProfile1.id,
+        halalCertified: true,
+        blockchainHash: '0x1234567890abcdef',
+        stockQuantity: 50,
+        minStockLevel: 10,
+        maxStockLevel: 500,
+        images: ['promise-beef.jpg'],
+        tags: ['halal', 'promise', 'premium', 'beef', 'blockchain'],
+        rating: 5.0,
+        reviewCount: 67,
       },
     }),
   ]);
@@ -178,8 +215,10 @@ async function main() {
 
   // Create certifications
   await Promise.all([
-    prisma.certification.create({
-      data: {
+    prisma.certification.upsert({
+      where: { blockchainTx: '0x1234567890abcdef' },
+      update: {},
+      create: {
         productId: products[0].id,
         blockchainTx: '0x1234567890abcdef',
         halalScore: 95,
@@ -187,13 +226,26 @@ async function main() {
         issuedBy: 'Islamic Food and Nutrition Council of America',
       },
     }),
-    prisma.certification.create({
-      data: {
+    prisma.certification.upsert({
+      where: { blockchainTx: '0xabcdef1234567890' },
+      update: {},
+      create: {
         productId: products[1].id,
         blockchainTx: '0xabcdef1234567890',
         halalScore: 98,
         status: HalalStatus.VERIFIED,
         issuedBy: 'Halal Food Authority',
+      },
+    }),
+    prisma.certification.upsert({
+      where: { blockchainTx: '0xfedcba0987654321' },
+      update: {},
+      create: {
+        productId: products[2].id,
+        blockchainTx: '0xfedcba0987654321',
+        halalScore: 100,
+        status: HalalStatus.VERIFIED,
+        issuedBy: 'HalalChain Blockchain Authority',
       },
     }),
   ]);
@@ -282,8 +334,10 @@ async function main() {
 
   // Create sample customer
   const customerPassword = await bcrypt.hash('customer123', 10);
-  const customer = await prisma.user.create({
-    data: {
+  const customer = await prisma.user.upsert({
+    where: { email: 'customer@example.com' },
+    update: {},
+    create: {
       email: 'customer@example.com',
       password: customerPassword,
       name: 'John Doe',
@@ -309,9 +363,9 @@ async function main() {
   });
 
   console.log('✅ Database seeded successfully!');
-  console.log(`👤 Admin: admin@halalchain.com / admin123`);
-  console.log(`🏪 Vendor 1: vendor1@halalchain.com / vendor123`);
-  console.log(`🏪 Vendor 2: vendor2@halalchain.com / vendor123`);
+  console.log(`👤 Admin: admin@halalchain.xyz / admin123`);
+  console.log(`🏪 Vendor 1: vendor1@halalchain.xyz / vendor123`);
+  console.log(`🏪 Vendor 2: vendor2@halalchain.xyz / vendor123`);
   console.log(`🛒 Customer: customer@example.com / customer123`);
 }
 

@@ -1,146 +1,184 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { useState } from 'react';
-
-import { aiToolsApi } from '../../lib/api';
-import { Sidebar } from './components/Sidebar';
+import {
+  WebPreview,
+  WebPreviewBody,
+  WebPreviewNavigation,
+  WebPreviewUrl,
+} from '@/components/ai-elements/web-preview';
+import { Loader } from '@/components/ai-elements/loader';
+import {
+  Artifact,
+  ArtifactHeader,
+  ArtifactTitle,
+  ArtifactDescription,
+  ArtifactActions,
+  ArtifactAction,
+  ArtifactContent,
+} from '@/components/ai-elements/artifact';
+import { Copy, Download, Share, X } from 'lucide-react';
 
 interface GeneratedSite {
-  hero?: string;
-  features?: string;
-  contact?: string;
-  [key: string]: unknown;
+  demo?: string;
+  webUrl?: string;
+  code?: string;
+  title?: string;
 }
 
-const generateSiteHTML = (site: GeneratedSite): string => {
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Generated HalalChain Site</title>
-      <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f9f9f9; color: #333; }
-        section { margin-bottom: 40px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #28a745; text-align: center; }
-        h2 { color: #007bff; }
-        p { line-height: 1.6; }
-      </style>
-    </head>
-    <body>
-      ${site.hero ? `<section><h1>${site.hero}</h1></section>` : ''}
-      ${site.features ? `<section><h2>Features</h2><p>${site.features}</p></section>` : ''}
-      ${site.contact ? `<section><h2>Contact</h2><p>${site.contact}</p></section>` : ''}
-    </body>
-    </html>
-  `;
-};
-
 export default function AISiteGeneratorPage() {
+  const [previewUrl, setPreviewUrl] = useState('');
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSite, setGeneratedSite] = useState<GeneratedSite | null>(null);
-  const [iframeSrc, setIframeSrc] = useState('');
-  const [error, setError] = useState<string>('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showArtifact, setShowArtifact] = useState(false);
 
-  const handleGenerate = async () => {
-    if (!prompt.trim()) {
-      setError('Please describe what you want to create for HalalChain');
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!prompt.trim()) return;
 
     setIsGenerating(true);
-    setError('');
-    setGeneratedSite(null);
-    setIframeSrc('');
-
     try {
-      const result = await aiToolsApi.generateSite(prompt);
-      setGeneratedSite(result);
-      setIframeSrc(generateSiteHTML(result));
-    } catch (err: unknown) {
-      console.error('Generation failed:', err);
-      let errorMessage = 'Failed to generate site. Please try again.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { data?: { message?: string } } };
-        errorMessage = axiosError.response?.data?.message || errorMessage;
-      }
-      setError(errorMessage);
+      const response = await fetch('/api/v0', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data: GeneratedSite = await response.json();
+      setPreviewUrl(data.demo || '/');
+      setGeneratedSite(data);
+      setShowArtifact(true);
+      console.log('Generation finished:', data);
+    } catch (error) {
+      console.error('Generation failed:', error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  const handleCopyCode = () => {
+    if (generatedSite?.code) {
+      navigator.clipboard.writeText(generatedSite.code);
+    }
+  };
+
+  const handleDownload = () => {
+    if (generatedSite?.code) {
+      const blob = new Blob([generatedSite.code], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'generated-site.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleShare = () => {
+    if (generatedSite?.demo) {
+      navigator.share?.({
+        title: generatedSite.title || 'Generated Site',
+        url: generatedSite.demo,
+      });
+    }
   };
 
   return (
-    <motion.div
-      className="flex h-screen bg-background"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-    >
-      {/* Sidebar */}
-      <div className={`transition-all duration-300 overflow-hidden bg-card border-r ${sidebarOpen ? 'w-64' : 'w-0'}`}>
-        <Sidebar />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Toggle Button */}
-        <div className="p-4 border-b flex justify-between items-center">
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-md bg-muted text-foreground hover:bg-primary/10"
-          >
-            {sidebarOpen ? 'Close' : 'Open'} Sidebar
-          </button>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Preview Section */}
+        <div className="space-y-4">
           <h1 className="text-2xl font-bold">AI Site Generator</h1>
-        </div>
 
-        {/* Iframe */}
-        <div className="flex-1 p-4 overflow-auto">
-          {iframeSrc ? (
-            <iframe
-              srcDoc={iframeSrc}
-              className="w-full h-96 border rounded-lg shadow-lg"
-              title="Generated Site Preview"
-            />
-          ) : (
-            <div className="flex items-center justify-center h-96 bg-muted rounded-lg">
-              <p className="text-muted-foreground">Generate a site to see the preview here</p>
-            </div>
-          )}
-        </div>
-
-        {/* Prompt Input */}
-        <div className="p-4 border-t bg-background">
-          <div className="space-y-4">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe what you want to create for HalalChain..."
-              className="w-full h-24 p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-              disabled={isGenerating}
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerating || !prompt.trim()}
-                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isGenerating ? 'Generating...' : 'Generate Site'}
-              </button>
-              {error && <p className="text-destructive text-sm">{error}</p>}
-            </div>
+          <div className="h-[500px] border rounded-lg overflow-hidden">
+            {isGenerating ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <Loader />
+                <p className="mt-4 text-muted-foreground">
+                  Generating app, this may take a few seconds...
+                </p>
+              </div>
+            ) : previewUrl ? (
+              <WebPreview defaultUrl={previewUrl}>
+                <WebPreviewNavigation>
+                  <WebPreviewUrl />
+                </WebPreviewNavigation>
+                <WebPreviewBody src={previewUrl} />
+              </WebPreview>
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                Your generated app will appear here
+              </div>
+            )}
           </div>
+
+          <form onSubmit={handleSubmit} className="relative">
+            <div className="relative">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe the app you want to build..."
+                className="w-full min-h-[80px] p-3 pr-12 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                rows={3}
+                disabled={isGenerating}
+              />
+              <button
+                type="submit"
+                disabled={!prompt.trim() || isGenerating}
+                className="absolute bottom-2 right-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGenerating ? 'Generating...' : 'Generate'}
+              </button>
+            </div>
+          </form>
         </div>
+
+        {/* Artifact Section */}
+        {showArtifact && generatedSite && (
+          <div className="space-y-4">
+            <Artifact>
+              <ArtifactHeader>
+                <div>
+                  <ArtifactTitle>{generatedSite.title || 'Generated Site'}</ArtifactTitle>
+                  <ArtifactDescription>Generated just now</ArtifactDescription>
+                </div>
+                <ArtifactActions>
+                  <ArtifactAction
+                    icon={Copy}
+                    label="Copy code"
+                    tooltip="Copy to clipboard"
+                    onClick={handleCopyCode}
+                  />
+                  <ArtifactAction
+                    icon={Download}
+                    label="Download"
+                    tooltip="Download HTML file"
+                    onClick={handleDownload}
+                  />
+                  <ArtifactAction
+                    icon={Share}
+                    label="Share"
+                    tooltip="Share site"
+                    onClick={handleShare}
+                  />
+                  <ArtifactAction
+                    icon={X}
+                    label="Close"
+                    tooltip="Close artifact"
+                    onClick={() => setShowArtifact(false)}
+                  />
+                </ArtifactActions>
+              </ArtifactHeader>
+              <ArtifactContent>
+                <pre className="text-sm overflow-x-auto bg-muted p-4 rounded">
+                  <code>{generatedSite.code || 'No code available'}</code>
+                </pre>
+              </ArtifactContent>
+            </Artifact>
+          </div>
+        )}
       </div>
-    </motion.div>
+    </div>
   );
 }
