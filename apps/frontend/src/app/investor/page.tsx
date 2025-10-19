@@ -340,7 +340,7 @@ export default function InvestorPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <PDFGeneratorComponent
                   variant="investor-deck"
-                  data={{ element: investorDeckRef.current || undefined }}
+                  data={{ element: investorDeckRef.current || undefined, useBusinessDoc: true }}
                   title="HalalChain Investor Deck"
                   filename="halalchain-investor-deck.pdf"
                   className="bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500"

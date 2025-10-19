@@ -11,6 +11,7 @@ interface PDFGeneratorProps {
   data?: {
     element?: HTMLElement;
     products?: Product[];
+    useBusinessDoc?: boolean;
     [key: string]: unknown;
   };
   title?: string;
@@ -34,9 +35,7 @@ export const PDFGeneratorComponent: React.FC<PDFGeneratorProps> = ({
     try {
       switch (variant) {
         case 'investor-deck':
-          if (data?.element) {
-            await generateInvestorDeck(data.element);
-          }
+          await generateInvestorDeck(data?.element, data?.useBusinessDoc);
           break;
         case 'product-catalog':
           if (data?.products) {
@@ -79,11 +78,11 @@ export const PDFGeneratorComponent: React.FC<PDFGeneratorProps> = ({
 };
 
 // Specialized components for common use cases
-export const InvestorDeckGenerator: React.FC<{ element?: HTMLElement }> = ({ element }) => {
+export const InvestorDeckGenerator: React.FC<{ element?: HTMLElement; useBusinessDoc?: boolean }> = ({ element, useBusinessDoc = false }) => {
   return (
     <PDFGeneratorComponent
       variant="investor-deck"
-      data={{ element }}
+      data={{ element, useBusinessDoc }}
       title="HalalChain Investor Deck"
       filename="halalchain-investor-deck.pdf"
     >
